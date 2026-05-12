@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Don't Think - Just Solve v2.0.7 | Master Edition</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --gain: #00ff88; --loss: #ff4444;
+            --unreal: linear-gradient(45deg, #00fbff, #ff89fb);
+            --legendary: #ff00ff; --master: #ffcc00; --pro: #00ff88; --elite: #00ccff; --newbie: #888;
+        }
+
+        body { margin: 0; height: 100vh; background: var(--bg); font-family: 'Inter', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .mode-header { font-size: 0.7rem; letter-spacing: 5px; color: #222; cursor: pointer; }
+        .active-m { color: white; font-weight: 900; border-bottom: 2px solid white; }
+        
+        .event-tabs { display: flex; gap: 8px; }
+        .tab { padding: 10px 18px; border: 1px solid #111; border-radius: 10px; cursor: pointer; color: #333; font-weight: 900; font-size: 0.75rem; transition: 0.3s; }
+        .tab.active { border-color: #444; color: white; background: rgba(255,255,255,0.05); }
+
+        .glass-card {
+            background: rgba(8,8,10,0.99); backdrop-filter: blur(50px);
+            padding: 35px; border-radius: 40px; width: 360px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.02); box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+        }
+
+        #rank-tag { font-size: 1.3rem; font-weight: 900; letter-spacing: 3px; margin-bottom: 5px; display: block; height: 1.5em; }
+        #vr-display { font-size: 5.5rem; font-weight: 900; margin: 0; line-height: 1; transition: 0.3s; }
+        #vr-display.editable { cursor: pointer; border-bottom: 1px dashed #222; }
+        
+        .stats { display: flex; gap: 25px; justify-content: center; margin-top: 15px; font-size: 0.7rem; color: #222; }
+        .stats b { color: #555; }
+
+        .slots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 25px 0; }
+        .slot { background: rgba(255,255,255,0.01); border: 1px solid #111; padding: 12px 0; border-radius: 10px; font-size: 0.75rem; color: #222; }
+        .slot.active { border-color: #333; background: rgba(255,255,255,0.03); }
+        .slot.filled { color: var(--gain); font-weight: bold; }
+
+        input#time-input { width: 100%; background: #000; border: 1px solid #1a1a1a; padding: 15px; border-radius: 15px; color: white; font-size: 1.5rem; text-align: center; outline: none; }
+
+        /* 位階顏色 */
+        .color-unreal { background: var(--unreal); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: br 2s infinite alternate; }
+        .color-legendary { color: var(--legendary) !important; text-shadow: 0 0 20px rgba(255,0,255,0.4); }
+        .color-master { color: var(--master) !important; text-shadow: 0 0 20px rgba(255,204,0,0.4); }
+        .color-pro { color: var(--pro) !important; }
+        .color-elite { color: var(--elite) !important; }
+        .color-newbie { color: var(--newbie) !important; }
+        .status-gain { color: var(--gain) !important; text-shadow: 0 0 30px var(--gain) !important; }
+        .status-loss { color: var(--loss) !important; text-shadow: 0 0 30px var(--loss) !important; }
+        @keyframes br { from { filter: drop-shadow(0 0 5px #00fbff); } to { filter: drop-shadow(0 0 20px #ff89fb); } }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <div class="mode-header" onclick="toggleMode()">
+        <span id="m-fun" class="active-m">FUN</span> | <span id="m-cube">CUBE</span>
+    </div>
+    <div class="event-tabs">
+        <div class="tab" id="tab-3x3" onclick="switchEvent('3x3')">3x3</div>
+        <div class="tab" id="tab-2x2" onclick="switchEvent('2x2')">2x2</div>
+        <div class="tab" id="tab-OH" onclick="switchEvent('OH')">ONE-HANDED</div>
+    </div>
+</div>
+
+<div class="glass-card">
+    <span id="rank-tag">--</span>
+    <h1 id="vr-display" onclick="manualVREdit()">--</h1>
+    <div class="stats">
+        <div>PEAK: <b id="peak-val">--</b></div>
+        <div>BASELINE: <b id="baseline-val">--</b></div>
+    </div>
+    <div class="slots"><div class="slot" id="s0">S1</div><div class="slot" id="s1">S2</div><div class="slot" id="s2">S3</div><div class="slot" id="s3">S4</div><div class="slot" id="s4">S5</div></div>
+    <input type="text" id="time-input" placeholder="TIME + ENTER" autocomplete="off">
+</div>
+
+<script>
+    const CONFIG = {
+        '3x3': { target: 5.0, factor: 200, step: 0.03 },
+        '2x2': { target: 1.5, factor: 500, step: 0.01 },
+        'OH':  { target: 12.0, factor: 125, step: 0.05 }
+    };
+
+    const RANK_DATA = [
+        { vr: 9999, tag: "[UNREAL]", cls: "color-unreal" },
+        { vr: 9000, tag: "[LEGENDARY]", cls: "color-legendary" },
+        { vr: 8000, tag: "[MASTER]", cls: "color-master" },
+        { vr: 4700, tag: "[PRO]", cls: "color-pro" },
+        { vr: 1500, tag: "[ELITE]", cls: "color-elite" },
+        { vr: 1,    tag: "[NEWBIE]", cls: "color-newbie" }
+    ];
+
+    let db;
+    try {
+        db = JSON.parse(localStorage.getItem('dtjs_v207_db')) || {
+            '3x3': { vr: 1, peak: 1 }, '2x2': { vr: 1, peak: 1 }, 'OH': { vr: 1, peak: 1 }
+        };
+    } catch(e) {
+        db = { '3x3': { vr: 1, peak: 1 }, '2x2': { vr: 1, peak: 1 }, 'OH': { vr: 1, peak: 1 } };
+    }
+
+    let currentEvent = '3x3';
+    let currentMode = 'FUN';
+    let state = { solves: [null,null,null,null,null], currentSlot: 0 };
+
+    const input = document.getElementById('time-input');
+    const vrEl = document.getElementById('vr-display');
+    const rankEl = document.getElementById('rank-tag');
+    const baselineEl = document.getElementById('baseline-val');
+
+    function toggleMode() {
+        currentMode = (currentMode === 'FUN') ? 'CUBE' : 'FUN';
+        document.getElementById('m-fun').className = (currentMode === 'FUN') ? 'active-m' : '';
+        document.getElementById('m-cube').className = (currentMode === 'CUBE') ? 'active-m' : '';
+        vrEl.classList.toggle('editable', currentMode === 'FUN');
+    }
+
+    function switchEvent(evt) {
+        currentEvent = evt;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${evt}`).classList.add('active');
+        resetSlots();
+        updateVisuals(db[currentEvent].vr, true);
+        input.focus();
+    }
+
+    function updateVisuals(vr, isFinal) {
+        let rule = RANK_DATA[RANK_DATA.length - 1]; 
+        for (let i = 0; i < RANK_DATA.length; i++) {
+            if (vr >= RANK_DATA[i].vr) { rule = RANK_DATA[i]; break; }
+        }
+        
+        rankEl.innerText = rule.tag;
+        const c = CONFIG[currentEvent];
+        baselineEl.innerText = (c.target + (10000 - vr) / c.factor).toFixed(2);
+        document.getElementById('peak-val').innerText = db[currentEvent].peak;
+
+        if(isFinal) {
+            RANK_DATA.forEach(r => { vrEl.classList.remove(r.cls); rankEl.classList.remove(r.cls); });
+            vrEl.classList.add(rule.cls); rankEl.classList.add(rule.cls);
+            vrEl.innerText = vr;
+        }
+    }
+
+    function manualVREdit() {
+        if (currentMode !== 'FUN') return;
+        let v = prompt(`Set ${currentEvent} VR:`, db[currentEvent].vr);
+        if (v && !isNaN(v)) {
+            let target = Math.min(9999, Math.max(1, parseInt(v)));
+            animateVR(target);
+        }
+    }
+
+    input.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {
+            let val = input.value.toLowerCase();
+            if(val === 'd') handleInput('DNF');
+            else if(!isNaN(parseFloat(val)) && val !== "") handleInput(parseFloat(val));
+            input.value = "";
+        }
+    });
+
+    function handleInput(val) {
+        state.solves[state.currentSlot] = val;
+        let sEl = document.getElementById(`s${state.currentSlot}`);
+        sEl.innerText = (val === 'DNF') ? 'DNF' : val.toFixed(2);
+        sEl.className = "slot filled";
+        state.currentSlot++;
+        if(state.currentSlot > 4) calculateAo5();
+        else updateActiveSlot();
+    }
+
+    function calculateAo5() {
+        let numeric = state.solves.map(s => s==='DNF' ? 999 : s).sort((a,b)=>a-b);
+        let ao5 = (numeric[1] + numeric[2] + numeric[3]) / 3;
+        let c = CONFIG[currentEvent];
+        let baseline = parseFloat(c.target + (10000 - db[currentEvent].vr) / c.factor);
+        let diff = ao5 - baseline;
+        let change = 0;
+
+        if (state.solves.filter(s=>s==='DNF').length >= 2) change = -90;
+        else if (Math.abs(diff) >= 0.01) {
+            change = (diff < 0) ? Math.abs(diff)/c.step : -diff/c.step;
+        }
+
+        let finalTarget = Math.max(1, Math.min(9999, db[currentEvent].vr + Math.floor(change)));
+        animateVR(finalTarget);
+        setTimeout(resetSlots, 1500);
+    }
+
+    function animateVR(target) {
+        const start = db[currentEvent].vr;
+        const diff = target - start;
+        const startT = performance.now();
+        
+        if (diff === 0) { updateVisuals(target, true); return; }
+        vrEl.className = diff > 0 ? 'status-gain' : 'status-loss';
+
+        function step(now) {
+            const p = Math.min((now - startT)/1500, 1);
+            const cur = Math.floor(start + diff * (1-Math.pow(1-p,3)));
+            const safe = Math.max(1, cur);
+            vrEl.innerText = safe;
+            updateVisuals(safe, false);
+
+            if(p < 1) requestAnimationFrame(step);
+            else {
+                db[currentEvent].vr = Math.max(1, target);
+                db[currentEvent].peak = Math.max(db[currentEvent].peak, db[currentEvent].vr);
+                vrEl.className = currentMode === 'FUN' ? 'editable' : '';
+                updateVisuals(db[currentEvent].vr, true);
+                localStorage.setItem('dtjs_v207_db', JSON.stringify(db));
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function updateActiveSlot() {
+        document.querySelectorAll('.slot').forEach((s, i) => s.classList.toggle('active', i === state.currentSlot));
+    }
+
+    function resetSlots() {
+        state = { solves: [null,null,null,null,null], currentSlot: 0 };
+        document.querySelectorAll('.slot').forEach((s, i) => { s.innerText = `S${i+1}`; s.className = i===0 ? "slot active" : "slot"; });
+    }
+
+    switchEvent('3x3');
+</script>
+</body>
+</html>
