@@ -401,10 +401,12 @@ display: inline-block;
         </div>
         <div class="leaderboard-title">🏁 Race Results: </div>
         <div class="leaderboard-list" id="ui-leaderboard-list"></div>
-        <div class="upload-btn-container">
-            <label for="bg-upload" class="upload-label">📸 Select Photos from Gallery </label>
-            <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
-        </div>
+<!-- ⚡【修復 Part 2】：在照片上傳右側精準置入一鍵清空天梯數據按鈕 -->
+<div class="upload-btn-container" style="display: flex; justify-content: center; gap: 10px;">
+    <label for="bg-upload" class="upload-label">📸 Select Photos </label>
+    <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
+    <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
+</div>
     </div>
 
     <script>
@@ -1085,6 +1087,20 @@ display: inline-block;
         document.getElementById("ui-peak-vr").innerText = peakVR[currentUniverse];
         document.getElementById("ui-total-matches").innerText = totalMatches[currentUniverse];
         updateTierGraphics(playerVR[currentUniverse]);
+            // ⚡【修復 Part 6-B2】：核心全數據洗白引擎（含安全防誤觸盾）
+        function forceClearAllData() {
+            if (confirm("Are you sure you want to RESET ALL DATA? This will wipe your VR, records, and history permanently!")) {
+                // 抹除本地儲存的所有魔方快取檔案
+                localStorage.removeItem('mkwcube_playerVR');
+                localStorage.removeItem('mkwcube_peakVR');
+                localStorage.removeItem('mkwcube_totalMatches');
+                localStorage.removeItem('mkwcube_podiumCount');
+                
+                // 強制重整網頁，讓系統重新讀取全新的乾淨初始變數 (1 VR / 0 Matches)
+                window.location.reload();
+            }
+        }
+            
     </script>
 </body>
 </html>
