@@ -559,94 +559,94 @@ function generate3x3Scramble() {
 }
 
 function generate4x4Scramble() {
-const movesConfig = [
-{ face: "R", axis: 0 }, { face: "L", axis: 0 }, { face: "Rw", axis: 0 },
-{ face: "U", axis: 1 }, { face: "D", axis: 1 }, { face: "Uw", axis: 1 },
-{ face: "F", axis: 2 }, { face: "B", axis: 2 }, { face: "Fw", axis: 2 }
-];
-const modifiers = ["", "'", "2"];
-let scramble = [];
-let lastMoveIdx = -1;
-let secondLastMoveIdx = -1;
-for (let i = 0; i < 40; i++) {
-let chosenIdx, currentMove, currentAxis;
-while (true) {
-chosenIdx = Math.floor(Math.random() * movesConfig.length);
-currentMove = movesConfig[chosenIdx];
-currentAxis = currentMove.axis;
-if (lastMoveIdx !== -1 && movesConfig[lastMoveIdx].face === currentMove.face) continue;
-if (lastMoveIdx !== -1 && movesConfig[lastMoveIdx].axis === currentAxis) {
-if (secondLastMoveIdx !== -1 && movesConfig[secondLastMoveIdx].face === currentMove.face) continue;
-}
-break;
-}
-let modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-scramble.push(currentMove.face + modifier);
-secondLastMoveIdx = lastMoveIdx;
-lastMoveIdx = chosenIdx;
-}
-return scramble.join(" ");
+    const movesConfig = [
+        { face: "R", axis: 0 }, { face: "L", axis: 0 }, { face: "Rw", axis: 0 },
+        { face: "U", axis: 1 }, { face: "D", axis: 1 }, { face: "Uw", axis: 1 },
+        { face: "F", axis: 2 }, { face: "B", axis: 2 }, { face: "Fw", axis: 2 }
+    ];
+    const modifiers = ["", "'", "2"];
+    let scramble = [];
+    let lastMoveIdx = -1;
+    let secondLastMoveIdx = -1;
+    for (let i = 0; i < 40; i++) {
+        let chosenIdx, currentMove, currentAxis;
+        while (true) {
+            chosenIdx = Math.floor(Math.random() * movesConfig.length);
+            currentMove = movesConfig[chosenIdx];
+            currentAxis = currentMove.axis;
+            if (lastMoveIdx !== -1 && movesConfig[lastMoveIdx].face === currentMove.face) continue;
+            if (lastMoveIdx !== -1 && movesConfig[lastMoveIdx].axis === currentAxis) {
+                if (secondLastMoveIdx !== -1 && movesConfig[secondLastMoveIdx].face === currentMove.face) continue;
+            }
+            break;
+        }
+        let modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
+        scramble.push(currentMove.face + modifier);
+        secondLastMoveIdx = lastMoveIdx;
+        lastMoveIdx = chosenIdx;
+    }
+    return scramble.join(" ");
 }
 
 function generateAndDisplayScramble() {
-const display = document.getElementById("ui-scramble-display");
-if (currentUniverse === "2x2") {
-display.classList.remove("scramble-4x4");
-const moves = ["R", "U", "F"];
-const modifiers = ["", "'", "2"];
-let scramble = [];
-let lastFace = "";
-for (let i = 0; i < 7; i++) {
-let face;
-do {
-face = moves[Math.floor(Math.random() * moves.length)];
-} while (face === lastFace);
-scramble.push(face + modifiers[Math.floor(Math.random() * modifiers.length)]);
-lastFace = face;
-}
-display.innerText = scramble.join(" ");
-} else if (currentUniverse === "4x4") {
-display.classList.add("scramble-4x4"); // 動態將 4x4 字型縮小到 11px
-display.innerText = generate4x4Scramble();
-} else {
-display.classList.remove("scramble-4x4");
-display.innerText = generate3x3Scramble();
-}
+    const display = document.getElementById("ui-scramble-display");
+    if (currentUniverse === "2x2") {
+        display.classList.remove("scramble-4x4");
+        const moves = ["R", "U", "F"];
+        const modifiers = ["", "'", "2"];
+        let scramble = [];
+        let lastFace = "";
+        for (let i = 0; i < 7; i++) {
+            let face;
+            do {
+                face = moves[Math.floor(Math.random() * moves.length)];
+            } while (face === lastFace);
+            scramble.push(face + modifiers[Math.floor(Math.random() * modifiers.length)]);
+            lastFace = face;
+        }
+        display.innerText = scramble.join(" ");
+    } else if (currentUniverse === "4x4") {
+        display.classList.add("scramble-4x4"); // 動態將 4x4 字型縮小到 11px
+        display.innerText = generate4x4Scramble();
+    } else {
+        display.classList.remove("scramble-4x4");
+        display.innerText = generate3x3Scramble();
+    }
 }
 
 function initLobby() {
-persistentLobby = [];
-for (let i = 1; i <= 23; i++) {
-let rolledVR = Math.round(playerVR[currentUniverse] + (Math.random() * 500 - 250));
-persistentLobby.push({
-id: i,
-name: `Cuber_Bot_${Math.floor(Math.random() * 90 + 10)}`,
-vr: Math.max(1, Math.min(10000, rolledVR)) // 邊界鉗制防禦
-});
-}
+    persistentLobby = [];
+    for (let i = 1; i <= 23; i++) {
+        let rolledVR = Math.round(playerVR[currentUniverse] + (Math.random() * 500 - 250));
+        persistentLobby.push({
+            id: i,
+            name: `Cuber_Bot_${Math.floor(Math.random() * 90 + 10)}`,
+            vr: Math.max(1, Math.min(10000, rolledVR)) // 邊界鉗制防禦
+        });
+    }
 }
 
 function cycleLobby() {
-let quitCount = Math.floor(Math.random() * 3) + 2;
-persistentLobby.sort(() => Math.random() - 0.5);
-persistentLobby.splice(0, quitCount);
-for (let i = 0; i < quitCount; i++) {
-let rolledVR = Math.round(playerVR[currentUniverse] + (Math.random() * 700 - 350));
-persistentLobby.push({
-id: Math.floor(Math.random() * 1000),
-name: `Cuber_Bot_${Math.floor(Math.random() * 90 + 10)}`,
-vr: Math.max(1, Math.min(10000, rolledVR))
-});
-}
+    let quitCount = Math.floor(Math.random() * 3) + 2;
+    persistentLobby.sort(() => Math.random() - 0.5);
+    persistentLobby.splice(0, quitCount);
+    for (let i = 0; i < quitCount; i++) {
+        let rolledVR = Math.round(playerVR[currentUniverse] + (Math.random() * 700 - 350));
+        persistentLobby.push({
+            id: Math.floor(Math.random() * 1000),
+            name: `Cuber_Bot_${Math.floor(Math.random() * 90 + 10)}`,
+            vr: Math.max(1, Math.min(10000, rolledVR))
+        });
+    }
 }
 
 function gaussianRandom(mean, stdDev) {
-let u = 0, v = 0;
-while(u === 0) u = Math.random(); 
-while(v === 0) v = Math.random();
-return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)) * stdDev + mean;
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random(); 
+    while(v === 0) v = Math.random();
+    return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)) * stdDev + mean;
 }
-function handleEnter(e) {
+
 function handleEnter(e) {
     // 🛡️ 1. 全平台手機/電腦相容性鍵盤判斷
     if (e.key !== 'Enter' && e.code !== 'Enter' && e.keyCode !== 13) {
@@ -690,25 +690,25 @@ function handleEnter(e) {
 }
 
 function toggleSlotPenalty(index) {
-currentPoolStates[index] = (currentPoolStates[index] + 1) % 3;
+    currentPoolStates[index] = (currentPoolStates[index] + 1) % 3;
 
-const slots = document.getElementById("ui-ao5-slots").children;
-const currentSlot = slots[index];
-const baseTime = currentSolvePool[index];
+    const slots = document.getElementById("ui-ao5-slots").children;
+    const currentSlot = slots[index];
+    const baseTime = currentSolvePool[index];
 
-currentSlot.className = "ao5-slot ao5-slot-active";
+    currentSlot.className = "ao5-slot ao5-slot-active";
 
-if (currentPoolStates[index] === 0) {
-currentSlot.innerText = baseTime.toFixed(2) + "s";
-} 
-else if (currentPoolStates[index] === 1) {
-currentSlot.classList.add("ao5-slot-plus2");
-currentSlot.innerText = (baseTime + 2.0).toFixed(2) + "s+";
-} 
-else if (currentPoolStates[index] === 2) {
-currentSlot.classList.add("ao5-slot-dnf");
-currentSlot.innerText = "DNF";
-}
+    if (currentPoolStates[index] === 0) {
+        currentSlot.innerText = baseTime.toFixed(2) + "s";
+    } 
+    else if (currentPoolStates[index] === 1) {
+        currentSlot.classList.add("ao5-slot-plus2");
+        currentSlot.innerText = (baseTime + 2.0).toFixed(2) + "s+";
+    } 
+    else if (currentPoolStates[index] === 2) {
+        currentSlot.classList.add("ao5-slot-dnf");
+        currentSlot.innerText = "DNF";
+    }
 }
 
 function processAo5Calculation() {
@@ -737,10 +737,8 @@ function processAo5Calculation() {
         }
         
         currentSolvePool = [];
-        currentPoolStates = new Array();
+        currentPoolStates = [];
         document.getElementById("ui-input-hint").innerText = "TIME + ENTER";
-        
-        // ⚡ Quick Tweak: Removed duplicate generateAndDisplayScramble() call from here!
         
         if (dnfCount >= 2) {
             handleDnfMatchFailure();
@@ -757,7 +755,6 @@ function processAo5Calculation() {
     }, 600);
 }
 
-function handleDnfMatchFailure() {
 function handleDnfMatchFailure() {
     totalMatches[currentUniverse]++;
     
@@ -794,7 +791,6 @@ function handleDnfMatchFailure() {
             const baseValElement = document.getElementById("ui-baseline-val");
             if (baseValElement) baseValElement.innerText = Math.max(config.minB, updatedBaseline).toFixed(2) + "s";
             
-            // ⚡ Quick Tweak: Roll a fresh scramble only AFTER the penalty animation stops rolling
             generateAndDisplayScramble();
         } else {
             currentTick -= 1;
@@ -808,165 +804,136 @@ function handleDnfMatchFailure() {
 }
 
 function runMatchEngine(calculatedAo5) {
-if (!persistentLobby || persistentLobby.length === 0) initLobby();
-totalMatches[currentUniverse]++;
-const config = UNIVERSE_CONFIG[currentUniverse];
-const baseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
-let matchResults = [];
+    if (!persistentLobby || persistentLobby.length === 0) initLobby();
+    totalMatches[currentUniverse]++;
+    const config = UNIVERSE_CONFIG[currentUniverse];
+    const baseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
+    let matchResults = [];
 
-persistentLobby.forEach(bot => {
-const vrDiff = bot.vr - playerVR[currentUniverse];
-const botBaseline = baseline * (1 - (vrDiff / 25000));
-const botSkillFactor = Math.max(100, bot.vr);
-const humanConsistency = 0.03 + (10000 - botSkillFactor) / 100000;
+    persistentLobby.forEach(bot => {
+        const vrDiff = bot.vr - playerVR[currentUniverse];
+        const botBaseline = baseline * (1 - (vrDiff / 25000));
+        const botSkillFactor = Math.max(100, bot.vr);
+        const humanConsistency = 0.03 + (10000 - botSkillFactor) / 100000;
 
-let mult = gaussianRandom(1.0, humanConsistency);
-mult = Math.max(0.75, Math.min(1.35, mult));
+        let mult = gaussianRandom(1.0, humanConsistency);
+        mult = Math.max(0.75, Math.min(1.35, mult));
 
-if (Math.random() < 0.01) {
-mult *= 0.85;
-}
+        if (Math.random() < 0.01) {
+            mult *= 0.85;
+        }
 
-matchResults.push({
-name: bot.name,
-vr: Math.max(1, bot.vr),
-time: parseFloat((Math.max(config.minB, botBaseline * mult)).toFixed(2)),
-isPlayer: false
-});
-});
+        matchResults.push({
+            name: bot.name,
+            vr: Math.max(1, bot.vr),
+            time: parseFloat((Math.max(config.minB, botBaseline * mult)).toFixed(2)),
+            isPlayer: false
+        });
+    });
 
-matchResults.push({ name: "YOU", vr: playerVR[currentUniverse], time: calculatedAo5, isPlayer: true });
-matchResults.sort((a, b) => a.time - b.time);
-const playerRank = matchResults.findIndex(x => x.isPlayer) + 1;
-if (playerRank <= 3) podiumCount[currentUniverse]++;
+    matchResults.push({ name: "YOU", vr: playerVR[currentUniverse], time: calculatedAo5, isPlayer: true });
+    matchResults.sort((a, b) => a.time - b.time);
+    const playerRank = matchResults.findIndex(x => x.isPlayer) + 1;
+    if (playerRank <= 3) podiumCount[currentUniverse]++;
 
-const totalBotVR = persistentLobby.reduce((sum, b) => sum + b.vr, 0);
-const avgBotVR = Math.max(1, Math.round(totalBotVR / 23));
+    const totalBotVR = persistentLobby.reduce((sum, b) => sum + b.vr, 0);
+    const avgBotVR = Math.max(1, Math.round(totalBotVR / 23));
 
-// ⚡ 核心數值平衡修正：計算線性等比，並用 Math.min 將倍率鎖定在 0.4x 到 2.5x 之間，粉碎低分溢出 Bug
-let bMultiplier = avgBotVR / Math.max(1, playerVR[currentUniverse]);
-bMultiplier = Math.min(1.2, Math.max(0.8, bMultiplier));
+    let bMultiplier = avgBotVR / Math.max(1, playerVR[currentUniverse]);
+    bMultiplier = Math.min(1.2, Math.max(0.8, bMultiplier));
 
-const rankBonus = 1 + (12 - playerRank) * 0.02;
-const timeDiff = baseline - calculatedAo5;
+    const rankBonus = 1 + (12 - playerRank) * 0.02;
+    const timeDiff = baseline - calculatedAo5;
 
-let vrChange = (timeDiff / 0.03) * bMultiplier;
+    let vrChange = (timeDiff / 0.03) * bMultiplier;
 
-if (vrChange >= 0) {
-vrChange = vrChange * rankBonus;
-} else {
-vrChange = vrChange * (2 - rankBonus);
-}
-
-if (playerRank === 1) vrChange = Math.max(200, vrChange);
-if (playerRank === 2) vrChange = Math.max(150, vrChange);
-if (playerRank === 3) vrChange = Math.max(100, vrChange);
-vrChange = Math.round(vrChange);
-
-if (playerRank === 1) vrChange = Math.max(10, vrChange);
-if (playerRank === 24) vrChange = Math.min(-10, vrChange);
-
-const oldVR = playerVR[currentUniverse];
-playerVR[currentUniverse] = Math.max(1, Math.min(10000, playerVR[currentUniverse] + vrChange));
-
-let isNewRecord = false;
-if (playerVR[currentUniverse] > peakVR[currentUniverse]) {
-peakVR[currentUniverse] = playerVR[currentUniverse];
-isNewRecord = true;
-}
-
-// ⚡ 防戰報爆分盾：計算真正注入天梯的實際分數變動，不讓 UI 虛報好幾萬的爆分
-const realNextVR = Math.max(1, Math.min(10000, oldVR + vrChange));
-const realChange = realNextVR - oldVR;
-
-const nextBaseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
-
-// 傳遞經由保護盾修正後的 realChange
-animateMarioKartMetrics(playerRank, realChange, oldVR, playerVR[currentUniverse], avgBotVR, bMultiplier, calculatedAo5, nextBaseline, matchResults, isNewRecord);
-cycleLobby();
-}
-
-function animateMarioKartMetrics(rank, change, startVR, targetVR, avgVR, mult, ao5, nextRoundBaseline, list, isNewRecord) {
-    const rankBadge = document.getElementById("ui-match-rank");
-    if (rankBadge) rankBadge.innerText = rank + getRankSuffix(rank) + " / 24";
-    
-    const changeBadge = document.getElementById("ui-vr-change");
-    if (changeBadge) {
-        changeBadge.className = "vr-change-badge";
-        setTimeout(() => {
-            if (change >= 0) {
-                changeBadge.innerText = "+" + change + " VR";
-                changeBadge.className = "vr-change-badge vr-plus vr-change-show";
-            } else {
-                changeBadge.innerText = change + " VR";
-                changeBadge.className = "vr-change-badge vr-minus vr-change-show";
-            }
-        }, 10);
+    if (vrChange >= 0) {
+        vrChange = vrChange * rankBonus;
+    } else {
+        vrChange = vrChange * (2 - rankBonus);
     }
+
+    if (playerRank === 1) vrChange = Math.max(200, vrChange);
+    if (playerRank === 2) vrChange = Math.max(150, vrChange);
+    if (playerRank === 3) vrChange = Math.max(100, vrChange);
+    vrChange = Math.round(vrChange);
+
+    if (playerRank === 1) vrChange = Math.max(10, vrChange);
+    if (playerRank === 24) vrChange = Math.min(-10, vrChange);
+
+    const oldVR = playerVR[currentUniverse];
+    playerVR[currentUniverse] = Math.max(1, Math.min(10000, playerVR[currentUniverse] + vrChange));
+
+    let isNewRecord = false;
+    if (playerVR[currentUniverse] > peakVR[currentUniverse]) {
+        peakVR[currentUniverse] = playerVR[currentUniverse];
+        isNewRecord = true;
+    }
+
+    const realNextVR = Math.max(1, Math.min(10000, oldVR + vrChange));
+    const realChange = realNextVR - oldVR;
+    const nextBaseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
+
+    animateMarioKartMetrics(playerRank, realChange, oldVR, playerVR[currentUniverse], avgBotVR, bMultiplier, calculatedAo5, nextBaseline, matchResults, isNewRecord);
+    cycleLobby();
+}
+
+// ⚡ 實裝戰報與天梯結算核心引擎
+function animateMarioKartMetrics(rank, change, oldVR, newVR, avgBotVR, mult, ao5, nextB, results, isRecord) {
+    document.getElementById("ui-match-rank").innerText = `${rank}th / 24`;
+    document.getElementById("ui-current-ao5").innerText = ao5.toFixed(2) + "s";
+    document.getElementById("ui-total-matches").innerText = totalMatches[currentUniverse];
+    document.getElementById("ui-room-avg").innerText = avgBotVR;
+    document.getElementById("ui-multiplier").innerText = mult.toFixed(2);
     
-    const vrDisplay = document.getElementById("ui-player-vr");
-    let currentTick = startVR;
+    let rate = ((podiumCount[currentUniverse] / totalMatches[currentUniverse]) * 100).toFixed(0);
+    document.getElementById("ui-podium-rate").innerText = `${rate}% / ${podiumCount[currentUniverse]}`;
+
+    const cb = document.getElementById("ui-vr-change");
+    if (change >= 0) {
+        cb.innerText = `+${change} VR`;
+        cb.className = "vr-change-badge vr-plus vr-change-show";
+    } else {
+        cb.innerText = `${change} VR`;
+        cb.className = "vr-change-badge vr-minus vr-change-show";
+    }
+
+    document.getElementById("ui-new-record").style.visibility = isRecord ? "visible" : "hidden";
+
+    let currentTick = oldVR;
     clearInterval(window.tickInterval);
-    
     window.tickInterval = setInterval(() => {
-        if (currentTick === targetVR) {
+        if (currentTick === newVR) {
             clearInterval(window.tickInterval);
-            const peakElement = document.getElementById("ui-peak-vr");
-            if (peakElement) peakElement.innerText = peakVR[currentUniverse];
-            
-            // ⚡ 破紀錄標籤精準控制：只有當最終 targetVR 真的大於原本的 oldPeak 且有正向增加時才顯示
-            const recordTag = document.getElementById("ui-new-record");
-            if (recordTag) {
-                recordTag.style.visibility = (isNewRecord && targetVR >= peakVR[currentUniverse]) ? "visible" : "hidden";
-            }
-            updateTierGraphics(playerVR[currentUniverse]);
-            
-            const baseValElement = document.getElementById("ui-baseline-val");
-            if (baseValElement) {
-                const config = UNIVERSE_CONFIG[currentUniverse];
-                baseValElement.innerText = Math.max(config.minB, nextRoundBaseline).toFixed(2) + "s";
-            }
+            updateTierGraphics(newVR);
+            document.getElementById("ui-baseline-val").innerText = nextB.toFixed(2) + "s";
+            generateAndDisplayScramble();
         } else {
-            if (startVR !== targetVR) {
-                currentTick += change > 0 ? 1 : -1;
-            }
-            if (vrDisplay) vrDisplay.innerText = currentTick;
+            currentTick += newVR > oldVR ? 1 : -1;
+            document.getElementById("ui-player-vr").innerText = currentTick;
             updateTierGraphics(currentTick);
         }
-    }, Math.max(5, Math.min(25, 400 / (Math.abs(change) || 1))));
-    
-    const totalMElement = document.getElementById("ui-total-matches");
-    if (totalMElement) totalMElement.innerText = totalMatches[currentUniverse];
-    
-    const podiumRateElement = document.getElementById("ui-podium-rate");
-    if (podiumRateElement) {
-        const totalM = totalMatches[currentUniverse] || 1;
-        podiumRateElement.innerText = ((podiumCount[currentUniverse] / totalM) * 100).toFixed(0) + "% / " + podiumCount[currentUniverse];
-    }
-    
-    const roomAvgElement = document.getElementById("ui-room-avg");
-    if (roomAvgElement) roomAvgElement.innerText = avgVR;
-    
-    const multElement = document.getElementById("ui-multiplier");
-    if (multElement) multElement.innerText = mult.toFixed(2) + "x";
-    
-    const ao5Element = document.getElementById("ui-current-ao5");
-    if (ao5Element) ao5Element.innerText = ao5.toFixed(2) + "s";
-    
-    const listContainer = document.getElementById("ui-leaderboard-list");
-    if (listContainer) {
-        listContainer.innerHTML = "";
-        list.forEach((p, idx) => {
-            const row = document.createElement("div");
-            row.className = p.isPlayer ? "leaderboard-row row-player" : "leaderboard-row";
-            row.innerHTML = `<div class='col-left'><span class='bot-rank'>${idx + 1}</span><span class='bot-name'>${p.name}</span></div><div class='col-right'><span class='bot-vr'>[${p.vr}]</span><span class='bot-time ${p.isPlayer ? "player-time" : ""}'>${p.time.toFixed(2)}s</span></div>`;
-            row.style.animation = "slideInRow 0.2s ease forwards";
-            row.style.animationDelay = (idx * 0.012) + "s";
-            listContainer.appendChild(row);
-        });
-    }
-}
+    }, 2);
 
+    const list = document.getElementById("ui-leaderboard-list");
+    list.innerHTML = "";
+    results.forEach((row, idx) => {
+        const item = document.createElement("div");
+        item.className = row.isPlayer ? "leaderboard-row row-player" : "leaderboard-row";
+        item.style.animation = `slideInRow 0.3s forwards ${idx * 0.04}s`;
+        item.innerHTML = `
+            <div class="col-left">
+                <span class="bot-rank">${idx + 1}</span>
+                <span class="bot-name">${row.name}</span>
+            </div>
+            <div class="col-right">
+                <span class="bot-vr">${row.vr}v</span>
+                <span class="bot-time ${row.isPlayer ? 'player-time' : ''}">${row.time.toFixed(2)}s</span>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
 
 function getRankSuffix(r) {
 if (r === 1) return "st";
