@@ -714,11 +714,10 @@ function processAo5Calculation() {
         let processedPool = [];
         let dnfCount = 0;
         
-        // 統計 DNF 與計算罰秒
         for (let i = 0; i < 5; i++) {
             if (currentPoolStates[i] === 2) {
                 dnfCount++;
-                processedPool.push(Infinity); // 用數學上的無限大代表 DNF，方便後續排序剔除
+                processedPool.push(Infinity); 
             } else if (currentPoolStates[i] === 1) {
                 processedPool.push(currentSolvePool[i] + 2.0);
             } else {
@@ -726,7 +725,6 @@ function processAo5Calculation() {
             }
         }
         
-        // 重置所有計分格的點擊監聽與外觀類別
         for (let i = 0; i < 5; i++) {
             slots[i].onclick = null;
             slots[i].innerText = "-";
@@ -736,19 +734,15 @@ function processAo5Calculation() {
         currentSolvePool = [];
         currentPoolStates = new Array();
         document.getElementById("ui-input-hint").innerText = "TIME + ENTER";
-        generateAndDisplayScramble();
         
-        // ⚡ 正規 WCA 規則判定：只有當出現 2 個或更多 DNF 時，Ao5 才會死當，執行扣 200 VR 懲罰
+        // ⚡ Quick Tweak: Removed duplicate generateAndDisplayScramble() call from here!
+        
         if (dnfCount >= 2) {
             handleDnfMatchFailure();
             return;
         }
         
-        // ⚡ 如果只有 1 個 DNF (或 0 個 DNF)，進行標準排序
         processedPool.sort((a, b) => a - b);
-        
-        // 此時如果含有 1 個 DNF，它已經身為 Infinity 被排到了最右邊（最大值被剔除）
-        // 排序後的索引 1、2、3 保證絕對是排除掉最快、以及排除掉 DNF 之後的「中間三盤正常成績」！
         let finalAo5 = (Number(processedPool[1]) + Number(processedPool[2]) + Number(processedPool[3])) / 3;
         
         recentScores[currentUniverse].unshift(finalAo5);
@@ -758,7 +752,7 @@ function processAo5Calculation() {
     }, 600);
 }
 
-
+function handleDnfMatchFailure() {
 function handleDnfMatchFailure() {
     totalMatches[currentUniverse]++;
     
@@ -774,7 +768,6 @@ function handleDnfMatchFailure() {
     const oldVR = playerVR[currentUniverse];
     playerVR[currentUniverse] = Math.max(1, playerVR[currentUniverse] - 200);
     
-    // ⚡ 視覺修正：扣分降級時，強制將新紀錄標籤隱藏
     const recordTag = document.getElementById("ui-new-record");
     if (recordTag) recordTag.style.visibility = "hidden";
     
@@ -795,6 +788,9 @@ function handleDnfMatchFailure() {
             const updatedBaseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
             const baseValElement = document.getElementById("ui-baseline-val");
             if (baseValElement) baseValElement.innerText = Math.max(config.minB, updatedBaseline).toFixed(2) + "s";
+            
+            // ⚡ Quick Tweak: Roll a fresh scramble only AFTER the penalty animation stops rolling
+            generateAndDisplayScramble();
         } else {
             currentTick -= 1;
             const vrDisplay = document.getElementById("ui-player-vr");
