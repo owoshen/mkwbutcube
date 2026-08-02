@@ -642,12 +642,13 @@ while(v === 0) v = Math.random();
 return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)) * stdDev + mean;
 }
 function handleEnter(e) {
+function handleEnter(e) {
     // 🛡️ 1. 全平台手機/電腦相容性鍵盤判斷
     if (e.key !== 'Enter' && e.code !== 'Enter' && e.keyCode !== 13) {
         return;
     }
     
-    // 🛡️ 2. 防溢出保護盾：如果已經錄入了 5 次成績正在等結算，直接攔截不重複塞入
+    // 🛡️ 2. 防溢出保護盾：如果已經錄入滿 5 次正在等結算，直接攔截不重複塞入
     if (currentSolvePool.length >= 5) {
         e.target.value = "";
         return;
@@ -664,7 +665,7 @@ function handleEnter(e) {
     const slots = document.getElementById("ui-ao5-slots").children;
     const currentSlot = slots[activeIndex];
 
-    // 🛡️ 3. 雙重保險：確認節點存在才進行渲染，徹底消滅 660 行的 undefined 錯誤！
+    // 🛡️ 3. 雙重保險：確認節點存在才進行渲染
     if (currentSlot) {
         currentSlot.innerText = val.toFixed(2) + "s";
         currentSlot.classList.add("ao5-slot-active");
@@ -673,7 +674,11 @@ function handleEnter(e) {
             toggleSlotPenalty(activeIndex);
         };
     }
-        // 當滿 5 次時，順暢啟動 WCA 去頭去尾賽事配對引擎
+
+    // ⚡ 核心修復：不論是不是最後一盤，只要按下 Enter 錄入成績，立刻生成下一盤的打亂代碼！
+    generateAndDisplayScramble();
+
+    // 當滿 5 次時，順暢啟動 WCA 去頭去尾賽事配對引擎
     if (currentSolvePool.length === 5) {
         processAo5Calculation();
     }
