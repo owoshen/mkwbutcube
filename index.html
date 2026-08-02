@@ -531,7 +531,8 @@ function generate3x3Scramble() {
     
     // 🛡️ Failsafe Axis Mapping: Completely explicit numbers to bypass all editor parsing bugs
     // R (0) & L (1) -> Axis 0 | U (2) & D (3) -> Axis 1 | F (4) & B (5) -> Axis 2
-    const axes =; 
+    // ⚡ Change that line strictly to this to fix the initialization freeze:
+    const axes = "001122".split("").map(Number);
     const modifiers = ["", "'", "2"];
     let scramble = [];
     let lastFace = -1;
