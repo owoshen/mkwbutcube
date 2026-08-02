@@ -527,30 +527,34 @@ reader.readAsDataURL(file);
 }
 
 function generate3x3Scramble() {
-const faces = ["R", "L", "U", "D", "F", "B"];
-// 換成這一行（用字串拆解成陣列，完全避開代碼編輯器吞括號的 Bug）
-const axes = "001122".split("").map(Number); // 對應 0:R/L, 1:U/D, 2:F/B
-const modifiers = ["", "'", "2"];
-let scramble = [];
-let lastFace = -1;
-let secondLastFace = -1;
-for (let i = 0; i < 20; i++) {
-let chosenFaceIdx, chosenAxis;
-while (true) {
-chosenFaceIdx = Math.floor(Math.random() * faces.length);
-chosenAxis = axes[chosenFaceIdx];
-if (chosenFaceIdx === lastFace) continue;
-if (lastFace !== -1 && axes[lastFace] === chosenAxis) {
-if (chosenFaceIdx === secondLastFace) continue;
-}
-break;
-}
-let modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-scramble.push(faces[chosenFaceIdx] + modifier);
-secondLastFace = lastFace;
-lastFace = chosenFaceIdx;
-}
-return scramble.join(" ");
+    const faces = ["R", "L", "U", "D", "F", "B"];
+    
+    // 🛡️ Failsafe Axis Mapping: Completely explicit numbers to bypass all editor parsing bugs
+    // R (0) & L (1) -> Axis 0 | U (2) & D (3) -> Axis 1 | F (4) & B (5) -> Axis 2
+    const axes =; 
+    const modifiers = ["", "'", "2"];
+    let scramble = [];
+    let lastFace = -1;
+    let secondLastFace = -1;
+    
+    for (let i = 0; i < 20; i++) {
+        let chosenFaceIdx, chosenAxis;
+        while (true) {
+            chosenFaceIdx = Math.floor(Math.random() * faces.length);
+            chosenAxis = axes[chosenFaceIdx];
+            
+            if (chosenFaceIdx === lastFace) continue;
+            if (lastFace !== -1 && axes[lastFace] === chosenAxis) {
+                if (chosenFaceIdx === secondLastFace) continue;
+            }
+            break;
+        }
+        let modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
+        scramble.push(faces[chosenFaceIdx] + modifier);
+        secondLastFace = lastFace;
+        lastFace = chosenFaceIdx;
+    }
+    return scramble.join(" ");
 }
 
 function generate4x4Scramble() {
