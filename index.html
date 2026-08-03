@@ -930,13 +930,23 @@ display: inline-block;
                 vrChange = vrChange * (2 - rankBonus);
             }
 
-            if (playerRank === 1) vrChange = Math.max(200, vrChange);
-            if (playerRank === 2) vrChange = Math.max(150, vrChange);
-            if (playerRank === 3) vrChange = Math.max(100, vrChange);
+            if (playerRank === 1) vrChange += 12;
+            if (playerRank === 2) vrChange += 11;
+            if (playerRank === 3) vrChange += 10;
+            if (playerRank === 4) vrChange += 9;
+            if (playerRank === 5) vrChange += 8;
+            if (playerRank === 6) vrChange += 7;
+            if (playerRank === 7) vrChange += 6;
+            if (playerRank === 8) vrChange += 5;
+            if (playerRank === 9) vrChange += 4;
+            if (playerRank === 10) vrChange += 3;
+            if (playerRank === 11) vrChange += 2;
+            if (playerRank === 12) vrChange += 1;     
+                
             vrChange = Math.round(vrChange);
 
-            if (playerRank === 1) vrChange = Math.max(10, vrChange);
-            if (playerRank === 24) vrChange = Math.min(-10, vrChange);
+            if (playerRank === 1) vrChange = Math.max(15, vrChange);
+            if (playerRank === 24) vrChange = Math.min(-15, vrChange);
 
             const oldVR = playerVR[currentUniverse];
             playerVR[currentUniverse] = Math.max(1, Math.min(10000, playerVR[currentUniverse] + vrChange));
