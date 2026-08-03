@@ -467,7 +467,7 @@ display: inline-block;
             { min: 1200, name: "[NEWBIE V]", color: "#a197ba" },
             { min: 900, name: "[NEWBIE IV]", color: "#8d83a8" },
             { min: 600, name: "[NEWBIE III]", color: "#796f96" },
-            { min: 400, name: "[NEWBIE II]", color: "#655c84" },
+            { min: 300, name: "[NEWBIE II]", color: "#655c84" },
             { min: 1, name: "[NEWBIE I]", color: "#514a72" }
         ];
 
@@ -846,7 +846,7 @@ display: inline-block;
         }
                 function handleDnfMatchFailure() {
             totalMatches[currentUniverse]++;
-            document.getElementById("ui-match-rank").innerText = "DNF / 24";
+            document.getElementById("ui-match-rank").innerText = "DNF / 24th";
             
             const changeBadge = document.getElementById("ui-vr-change");
             changeBadge.innerText = "-200 VR";
@@ -930,19 +930,12 @@ display: inline-block;
                 vrChange = vrChange * (2 - rankBonus);
             }
 
-            if (playerRank === 1) vrChange += 7;
-            if (playerRank === 2) vrChange += 6;
-            if (playerRank === 3) vrChange += 5;
-            if (playerRank === 4) vrChange += 4;
-            if (playerRank === 5) vrChange += 4;
-            if (playerRank === 6) vrChange += 3;
-            if (playerRank === 7) vrChange += 3;
-            if (playerRank === 8) vrChange += 2;
-            if (playerRank === 9) vrChange += 2;
-            if (playerRank === 10) vrChange += 1;
-            if (playerRank === 11) vrChange += 1;
-            if (playerRank === 12) vrChange += 1;     
-                
+            if (playerRank === 1) vrChange += 5;
+            if (playerRank === 2) vrChange += 4;
+            if (playerRank === 3) vrChange += 3;
+            if (playerRank === 4) vrChange += 2;
+            if (playerRank === 5) vrChange += 1;
+           
             vrChange = Math.round(vrChange);
 
             if (playerRank === 1) vrChange = Math.max(15, vrChange);
@@ -1075,7 +1068,7 @@ display: inline-block;
 
             if (currentMode === "TIMER") resetWcaTimerUi();
 
-            document.getElementById("ui-match-rank").innerText = "--- / 24";
+            document.getElementById("ui-match-rank").innerText = "--- / 24th";
             document.getElementById("ui-vr-change").className = "vr-change-badge";
             document.getElementById("ui-vr-change").innerText = "+0 VR";
             document.getElementById("ui-room-avg").innerText = "-";
