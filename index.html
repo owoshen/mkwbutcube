@@ -107,7 +107,7 @@ padding: 15px;
 border-radius: 12px;
 background: rgba(0,0,0,0.2);
 border: 1px solid var(--border-color);
-transition: all 0.5s ease;
+transition: all 2s ease;
 }
 .new-record-tag {
 color: var(--neon-pink);
@@ -121,14 +121,14 @@ visibility: hidden;
 font-size: 15px;
 font-weight: bold;
 letter-spacing: 1px;
-transition: color 0.3s;
+transition: color 2s;
 }
 .vr-number {
 font-size: 72px;
 font-weight: 900;
 margin: 5px 0;
 font-family: monospace;
-transition: all 0.3s ease;
+transition: all 2s ease;
 }
 .style-unreal-text {
 background: linear-gradient(to right, #00f3ff, #ff00ff);
@@ -629,7 +629,7 @@ display: inline-block;
                 const modifiers = ["", "'", "2"];
                 let scramble = [];
                 let lastFace = "";
-                for (let i = 0; i < 7; i++) {
+                for (let i = 0; i < 8; i++) {
                     let face;
                     do {
                         face = moves[Math.floor(Math.random() * moves.length)];
