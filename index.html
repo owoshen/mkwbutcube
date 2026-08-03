@@ -181,7 +181,7 @@ align-items: center;
 justify-content: center;
 font-size: 11px;
 color: #554d63;
-transition: all 0.2s ease;
+transition: all 0.4s ease;
 cursor: pointer;
 user-select: none;
 }
@@ -445,30 +445,31 @@ display: inline-block;
 
         const TIER_MATRIX = [
             { min: 9999, name: "[UNREAL]", color: "linear-gradient" },
-            { min: 9800, name: "[LEGENDARY V]", color: "#ff007f" },
-            { min: 9600, name: "[LEGENDARY IV]", color: "#ff00bb" },
-            { min: 9400, name: "[LEGENDARY III]", color: "#ff00ff" },
-            { min: 9200, name: "[LEGENDARY II]", color: "#cc00ff" },
-            { min: 9000, name: "[LEGENDARY I]", color: "#9900ff" },
-            { min: 8800, name: "[MASTER V]", color: "#ffaa00" },
-            { min: 8600, name: "[MASTER IV]", color: "#ffbb00" },
-            { min: 8400, name: "[MASTER III]", color: "#ffcc00" },
-            { min: 8200, name: "[MASTER II]", color: "#ffdd00" },
-            { min: 8000, name: "[MASTER I]", color: "#ffee00" },
-            { min: 7500, name: "[PRO V]", color: "#00ff66" },
-            { min: 6800, name: "[PRO IV]", color: "#00ff99" },
-            { min: 6100, name: "[PRO III]", color: "#00ffcc" },
-            { min: 5400, name: "[PRO II]", color: "#00ffff" },
-            { min: 4700, name: "[PRO I]", color: "#00ccff" },
-            { min: 4000, name: "[ELITE IV]", color: "#3399ff" },
-            { min: 3300, name: "[ELITE III]", color: "#5588ff" },
-            { min: 2500, name: "[ELITE II]", color: "#7777ff" },
-            { min: 1500, name: "[ELITE I]", color: "#9966ff" },
-            { min: 1200, name: "[NEWBIE V]", color: "#a197ba" },
-            { min: 900, name: "[NEWBIE IV]", color: "#8d83a8" },
-            { min: 600, name: "[NEWBIE III]", color: "#796f96" },
-            { min: 300, name: "[NEWBIE II]", color: "#655c84" },
-            { min: 1, name: "[NEWBIE I]", color: "#514a72" }
+            { min: 9800, name: "[LEGENDARY 5]", color: "#ff007f" },
+            { min: 9600, name: "[LEGENDARY 4]", color: "#ff00bb" },
+            { min: 9400, name: "[LEGENDARY 3]", color: "#ff00ff" },
+            { min: 9200, name: "[LEGENDARY 2]", color: "#cc00ff" },
+            { min: 9000, name: "[LEGENDARY 1]", color: "#9900ff" },
+            { min: 8800, name: "[MASTER 5]", color: "#ffaa00" },
+            { min: 8600, name: "[MASTER 4]", color: "#ffbb00" },
+            { min: 8400, name: "[MASTER 3]", color: "#ffcc00" },
+            { min: 8200, name: "[MASTER 2]", color: "#ffdd00" },
+            { min: 8000, name: "[MASTER 1]", color: "#ffee00" },
+            { min: 7500, name: "[PRO 5]", color: "#66ee33" },
+            { min: 7000, name: "[PRO 4]", color: "#00ff66" },
+            { min: 6500, name: "[PRO 3]", color: "#00ff99" },
+            { min: 6000, name: "[PRO 2]", color: "#00ffcc" },
+            { min: 5500, name: "[PRO 1]", color: "#00ffff" },
+            { min: 4800, name: "[ELITE 5]", color: "#00ccff" },
+            { min: 4100, name: "[ELITE 4]", color: "#3399ff" },
+            { min: 3400, name: "[ELITE 3]", color: "#5588ff" },
+            { min: 2700, name: "[ELITE 2]", color: "#7777ff" },
+            { min: 2000, name: "[ELITE 1]", color: "#9966ff" },
+            { min: 1600, name: "[NEWBIE 5]", color: "#a197ba" },
+            { min: 1200, name: "[NEWBIE 4]", color: "#8d83a8" },
+            { min: 800, name: "[NEWBIE 3]", color: "#796f96" },
+            { min: 400, name: "[NEWBIE 2]", color: "#655c84" },
+            { min: 1, name: "[NEWBIE 1]", color: "#514a72" }
         ];
 
         function updateTierGraphics(targetVR) {
