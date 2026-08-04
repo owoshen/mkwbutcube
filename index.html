@@ -361,80 +361,135 @@ font-size: 12px;
 cursor: pointer;
 display: inline-block;
 }
+/* 🏆 段位大百科 Modal 遮罩樣式 */
+.rank-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(12, 10, 15, 0.85); backdrop-filter: blur(8px);
+    display: none; justify-content: center; align-items: center; z-index: 9999;
+}
+.rank-modal-content {
+    background: #14111a; border: 2px solid var(--border-color); width: 90%; max-width: 380px;
+    border-radius: 16px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+}
+.modal-header { font-size: 16px; font-weight: 900; text-align: center; color: var(--neon-gold); letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+.rank-matrix-scroll-list { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
+.rank-museum-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 6px; background: #1b1724; font-size: 13px; font-weight: bold; }
+.museum-row-current { border: 1px solid var(--neon-cyan) !important; background: rgba(0,243,255,0.08) !important; box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+
+.rank-museum-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 🏆 UNREAL 流動漸變霓虹動畫 */
+@keyframes unrealGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.unreal-gradient-text {
+    background: linear-gradient(90deg, #ff007f, #9900ff, #00ffff, #ff007f);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: unrealGlow 4s ease infinite;
+}
 </style>
 </head>
 <body>
         <div class="phone-container">
-        <div class="top-bar">
-            <span>Life = Cube = Life :3</span>
-            <button class="mode-badge mode-cube" id="ui-mode-toggle" onclick="toggleMode()">MODE: CUBE</button>
-        </div>
-        <div class="tabs" id="ui-tabs-container">
-            <span class="tab-btn tab-active" onclick="switchUniverse('3x3')">3x3</span>
-            <span class="tab-btn" onclick="switchUniverse('2x2')">2x2</span>
-            <span class="tab-btn" onclick="switchUniverse('4x4')">4x4</span>
-            <span class="tab-btn" onclick="switchUniverse('OH')">ONE-HANDED</span>
-        </div>
-        <div id="ui-scramble-display" class="scramble-box">GENERATING SCRAMBLE...</div>
-        <div class="vr-display-container" id="ui-glow-box">
-            <div class="new-record-tag" id="ui-new-record">[NEW RECORD!]</div>
-            <div class="tier-tag" id="ui-tier-name">[NEWBIE 1]</div>
-            <div class="vr-number" id="ui-player-vr">1</div>
-        </div>
-        <div class="grid-stats">
-            <div class="stat-card">
-                <div class="stat-label">Peak VR</div>
-                <div class="stat-value color-pink" id="ui-peak-vr">1</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Baseline</div>
-                <div class="stat-value color-cyan" id="ui-baseline-val">54.99s</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Total Races</div>
-                <div class="stat-value" id="ui-total-matches">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Win % / Podiums</div>
-                <div class="stat-value color-cyan" id="ui-podium-rate">0% / 0</div>
-            </div>
-        </div>
-        <div class="ao5-history-bar" id="ui-ao5-slots">
-            <div class="ao5-slot">-</div>
-            <div class="ao5-slot">-</div>
-            <div class="ao5-slot">-</div>
-            <div class="ao5-slot">-</div>
-            <div class="ao5-slot">-</div>
-        </div>
-        <div class="input-section">
-            <input type="number" step="0.01" id="manual-input" placeholder="0.00" onkeydown="handleEnter(event)">
-            <span class="time-enter-hint" id="ui-input-hint">TIME + ENTER</span>
-            <div class="live-timer-display" id="ui-live-timer-panel" onclick="triggerTimerInteraction()">TAP / SPACE TO INSPECT</div>
-            <div class="fun-input-group" id="ui-fun-inputs">
-                <input type="number" id="fun-vr-field" placeholder="Enter VR (1-9999)">
-                <button class="fun-btn" onclick="triggerFunSetVR()">SET CUSTOM VR</button>
-            </div>
-        </div>
-        <div class="battle-report-bar">
-            <div class="rank-badge" id="ui-match-rank">--- / 24th</div>
-            <div class="vr-change-badge" id="ui-vr-change">+0 VR</div>
-        </div>
-        <div class="lobby-summary">
-            Room Average VR: <span id="ui-room-avg">-</span> | 
-            Multiplier: <span id="ui-multiplier">-</span> | 
-            ao5: <span id="ui-current-ao5">-</span>
-        </div>
-        <div class="leaderboard-title">🏁 Race Results: </div>
-        <div class="leaderboard-list" id="ui-leaderboard-list"></div>
-<!-- ⚡【修復 Part 2】：在照片上傳右側精準置入一鍵清空天梯數據按鈕 -->
-<div class="upload-btn-container" style="display: flex; justify-content: center; gap: 10px;">
-    <label for="bg-upload" class="upload-label">📸 Select Photos </label>
-    <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
-    <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
-</div>
+    <div class="top-bar">
+        <span>Life = Cube = Life :3</span>
+        <button class="mode-badge mode-cube" id="ui-mode-toggle" onclick="toggleMode()">MODE: CUBE</button>
     </div>
+    <div class="tabs" id="ui-tabs-container">
+        <span class="tab-btn tab-active" onclick="switchUniverse('3x3')">3x3</span>
+        <span class="tab-btn" onclick="switchUniverse('2x2')">2x2</span>
+        <span class="tab-btn" onclick="switchUniverse('4x4')">4x4</span>
+        <span class="tab-btn" onclick="switchUniverse('OH')">ONE-HANDED</span>
+    </div>
+    <div id="ui-scramble-display" class="scramble-box">GENERATING SCRAMBLE...</div>
+    
+    <!-- 🏆 段位大百科 Modal 彈出視窗 -->
+<div id="rank-modal" class="rank-modal-overlay" onclick="if(event.target===this) hideRankEncyclopedia()">
+    <div class="rank-modal-content">
+        <div class="modal-header">🏆 RANKING ENCYCLOPEDIA</div>
+        <div class="rank-matrix-scroll-list" id="rank-list-container">
+            <!-- 由 JavaScript 動態生成 -->
+        </div>
+        
+        <!-- ⚡ 修正重點：提高按鈕層級並綁定新函式 -->
+        <div style="text-align: center; margin-top: 15px; position: relative; z-index: 10000;">
+            <button class="close-btn" onclick="hideRankEncyclopedia(); event.stopPropagation();" style="background:#fff; color:#000; border:none; padding:8px 24px; border-radius:4px; font-weight:bold; cursor:pointer; letter-spacing:1px; display: inline-block;">CLOSE</button>
+        </div>
+    </div>
+</div>
 
-    <script>
+
+    <!-- ⚡【新增】：加上點擊事件，讓玩家點擊目前的段位或 VR 就能打開段位清單 -->
+    <div class="vr-display-container" id="ui-glow-box" onclick="openRankModal()" style="cursor: pointer;">
+        <div class="new-record-tag" id="ui-new-record">[NEW RECORD!]</div>
+        <div class="tier-tag" id="ui-tier-name">[NEWBIE 1]</div>
+        <div class="vr-number" id="ui-player-vr">1</div>
+    </div>
+    
+    <div class="grid-stats">
+        <div class="stat-card">
+            <div class="stat-label">Peak VR</div>
+            <div class="stat-value color-pink" id="ui-peak-vr">1</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Baseline</div>
+            <div class="stat-value color-cyan" id="ui-baseline-val">54.99s</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Races</div>
+            <div class="stat-value" id="ui-total-matches">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Win % / Podiums</div>
+            <div class="stat-value color-cyan" id="ui-podium-rate">0% / 0</div>
+        </div>
+    </div>
+    <div class="ao5-history-bar" id="ui-ao5-slots">
+        <div class="ao5-slot">-</div>
+        <div class="ao5-slot">-</div>
+        <div class="ao5-slot">-</div>
+        <div class="ao5-slot">-</div>
+        <div class="ao5-slot">-</div>
+    </div>
+    <div class="input-section">
+        <input type="number" step="0.01" id="manual-input" placeholder="0.00" onkeydown="handleEnter(event)">
+        <span class="time-enter-hint" id="ui-input-hint">TIME + ENTER</span>
+        <div class="live-timer-display" id="ui-live-timer-panel" onclick="triggerTimerInteraction()">TAP / SPACE TO INSPECT</div>
+        <div class="fun-input-group" id="ui-fun-inputs">
+            <input type="number" id="fun-vr-field" placeholder="Enter VR (1-9999)">
+            <button class="fun-btn" onclick="triggerFunSetVR()">SET CUSTOM VR</button>
+        </div>
+    </div>
+    <div class="battle-report-bar">
+        <div class="rank-badge" id="ui-match-rank">--- / 24th</div>
+        <div class="vr-change-badge" id="ui-vr-change">+0 VR</div>
+    </div>
+    <div class="lobby-summary">
+        Room Average VR: <span id="ui-room-avg">-</span> | 
+        Multiplier: <span id="ui-multiplier">-</span> | 
+        ao5: <span id="ui-current-ao5">-</span>
+    </div>
+    <div class="leaderboard-title">🏁 Race Results: </div>
+    <div class="leaderboard-list" id="ui-leaderboard-list"></div>
+
+    <div class="upload-btn-container" style="display: flex; justify-content: center; gap: 10px;">
+        <label for="bg-upload" class="upload-label">📸 Select Photos </label>
+        <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
+        <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
+    </div>
+</div>
+
+
+<script>
                 // ⚡【永久備份存檔盾】
         let playerVR = JSON.parse(localStorage.getItem('mkwcube_playerVR')) || { "3x3": 1, "2x2": 1, "4x4": 1, "OH": 1 };
         let peakVR = JSON.parse(localStorage.getItem('mkwcube_peakVR')) || { "3x3": 1, "2x2": 1, "4x4": 1, "OH": 1 };
@@ -1169,7 +1224,101 @@ function parseCSTimerTime(inputStr) {
                 window.location.reload();
             }
         }
-            
+            // 核心段位配置數據
+// 核心段位配置數據
+const RANK_CONFIG = [
+    { min: 9999, name: "[UNREAL]", color: "linear-gradient" },
+    { min: 9800, name: "[LEGENDARY 5]", color: "#ff007f" },
+    { min: 9600, name: "[LEGENDARY 4]", color: "#ff00bb" },
+    { min: 9400, name: "[LEGENDARY 3]", color: "#ff00ff" },
+    { min: 9200, name: "[LEGENDARY 2]", color: "#cc00ff" },
+    { min: 9000, name: "[LEGENDARY 1]", color: "#9900ff" },
+    { min: 8800, name: "[MASTER 5]", color: "#ffaa00" },
+    { min: 8600, name: "[MASTER 4]", color: "#ffbb00" },
+    { min: 8400, name: "[MASTER 3]", color: "#ffcc00" },
+    { min: 8200, name: "[MASTER 2]", color: "#ffdd00" },
+    { min: 8000, name: "[MASTER 1]", color: "#ffee00" },
+    { min: 7500, name: "[PRO 5]", color: "#66ee33" },
+    { min: 7000, name: "[PRO 4]", color: "#00ff66" },
+    { min: 6500, name: "[PRO 3]", color: "#00ff99" },
+    { min: 6000, name: "[PRO 2]", color: "#00ffcc" },
+    { min: 5500, name: "[PRO 1]", color: "#00ffff" },
+    { min: 4800, name: "[ELITE 5]", color: "#00ccff" },
+    { min: 4100, name: "[ELITE 4]", color: "#3399ff" },
+    { min: 3400, name: "[ELITE 3]", color: "#5588ff" },
+    { min: 2700, name: "[ELITE 2]", color: "#7777ff" },
+    { min: 2000, name: "[ELITE 1]", color: "#9966ff" },
+    { min: 1600, name: "[NEWBIE 5]", color: "#a197ba" },
+    { min: 1200, name: "[NEWBIE 4]", color: "#8d83a8" },
+    { min: 800, name: "[NEWBIE 3]", color: "#796f96" },
+    { min: 400, name: "[NEWBIE 2]", color: "#655c84" },
+    { min: 1, name: "[NEWBIE 1]", color: "#514a72" }
+];
+
+// 內部段位配對輔助函式
+function getCurrentRankObj(vr) {
+    return RANK_CONFIG.find(rank => vr >= rank.min) || RANK_CONFIG[RANK_CONFIG.length - 1];
+}
+
+// 🏆 開啟段位百科
+// 🏆 開啟段位百科 (保持各段位獨立顏色)
+function openRankModal() {
+    const container = document.getElementById("rank-list-container");
+    container.innerHTML = ""; // 每次開啟都重製清單
+
+    // 精準讀取你原本畫面上的文字節點
+    const currentVrVal = parseInt(document.getElementById("ui-player-vr").innerText) || 1;
+    const peakVrVal = parseInt(document.getElementById("ui-peak-vr").innerText) || currentVrVal;
+
+    const activeRankObj = getCurrentRankObj(currentVrVal);
+
+    RANK_CONFIG.forEach(rank => {
+        const row = document.createElement("div");
+        row.classList.add("rank-museum-row"); 
+
+        // 規則 5a：如果是目前段位，套用你寫好的高亮 class 樣式
+        const isCurrentActive = (rank.name === activeRankObj.name);
+        if (isCurrentActive) {
+            row.classList.add("museum-row-current");
+        }
+
+        // 規則 5c & 5d：如果最高 Peak VR 沒到過此階層，名稱顯示為 "???"
+        const isUnlocked = peakVrVal >= rank.min;
+        let titleText = isUnlocked ? rank.name : "???";
+
+        // 規則 5a：目前段位加上星星標記
+        if (isCurrentActive) {
+            titleText = "⭐ " + titleText;
+        }
+
+        // ⚡【修正重點】：顏色改為讀取該列段位獨立的 `rank.color`
+        let styleAttribute = "";
+        let unrealClass = "";
+        
+        if (rank.color === "linear-gradient") {
+            unrealClass = "unreal-gradient-text"; // 如果是 UNREAL，依然套用炫彩動畫
+        } else {
+            styleAttribute = `style="color: ${rank.color};"`; // 獨立顏色
+        }
+
+        row.innerHTML = `
+            <span class="rank-title ${unrealClass}" ${styleAttribute}>${titleText}</span>
+            <span class="rank-vr">${rank.min} VR</span>
+        `;
+
+        container.appendChild(row);
+    });
+
+    // 顯示視窗
+    document.getElementById("rank-modal").style.display = "flex";
+}
+// Change the function name to avoid global window conflicts
+function hideRankEncyclopedia() {
+    const modal = document.getElementById("rank-modal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
     </script>
 </body>
 </html>
