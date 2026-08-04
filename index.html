@@ -49,7 +49,7 @@ transition: max-width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
 }
 
 /* 🖥️ PC Screen Widening Integration */
-@media (min-width: 576px) {
+@media (min-width: 768px) {
     .phone-container {
         max-width: 920px; /* Safely widens up the interface for desktop windows */
     }
@@ -153,7 +153,6 @@ transition: color 1s, text-shadow 1s;
 font-size: 72px;
 font-weight: 900;
 margin: 5px 0;
-font-family: monospace;
 transition: all 1.5s ease;
 }
 .style-unreal-text {
@@ -656,7 +655,7 @@ display: inline-block;
                 const modifiers = ["", "'", "2"];
                 let scramble = [];
                 let lastFace = "";
-                for (let i = 0; i < 8; i++) {
+                for (let i = 0; i < 10; i++) {
                     let face;
                     do {
                         face = moves[Math.floor(Math.random() * moves.length)];
