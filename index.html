@@ -726,10 +726,50 @@ display: inline-block;
                 processAo5Calculation();
             }
         }
+// 🏎‍🟀 csTimer Implicit Time Parser Logic
+function parseCSTimerTime(inputStr) {
+    inputStr = inputStr.trim();
+    if (!inputStr) return 0;
 
+    // 1. If it has a colon (e.g., 1:23.45) or manual decimal point (e.g., 13.21), handle normally
+    if (inputStr.includes(':') || inputStr.includes('.')) {
+        if (inputStr.includes(':')) {
+            const parts = inputStr.split(':');
+            const mins = parseFloat(parts[0]) || 0;
+            const secs = parseFloat(parts[1]) || 0;
+            return (mins * 60) + secs;
+        }
+        return parseFloat(inputStr) || 0;
+    }
+
+    // 2. Pure numerical string manipulation (csTimer format conversion logic)
+    let digits = inputStr.replace(/\D/g, ''); // Filter anything that isn't a pure number
+    if (!digits) return 0;
+
+    // Left-pad a short integer sequence (e.g., "5" -> "05" centiseconds)
+    if (digits.length === 1) digits = "0" + digits;
+
+    const centiseconds = parseInt(digits.slice(-2), 10) || 0;
+    const remaining = digits.slice(0, -2); 
+    let seconds = 0;
+    let minutes = 0;
+
+    if (remaining.length > 0) {
+        seconds = parseInt(remaining.slice(-2), 10) || 0;
+        const minsStr = remaining.slice(0, -2);
+        if (minsStr.length > 0) {
+            minutes = parseInt(minsStr, 10) || 0;
+        }
+    }
+
+    // Accumulate components into a true floating-point decimal of seconds
+    const totalSeconds = (minutes * 60) + seconds + (centiseconds / 100);
+    return parseFloat(totalSeconds.toFixed(2));
+}
+        
         function handleEnter(e) {
             if (e.key !== 'Enter' && e.code !== 'Enter' && e.keyCode !== 13) return;
-            const val = parseFloat(e.target.value);
+            const val = parseCSTimerTime(e.target.value);
             if (isNaN(val) || val <= 0) return;
             e.target.value = "";
             injectScoreDirectly(val);
