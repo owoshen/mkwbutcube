@@ -888,6 +888,131 @@ function parseCSTimerTime(inputStr) {
             }
         }
 
+            // 📱 Smart Mobile Scroll-Safe Touch Detection variables
+                // 📱 全域狀態與防誤觸冷卻鎖變數
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let timerCooldownActive = false; // 🛡️【新增防護盾】：用來鎖死連續兩次點擊的冷卻開關
+
+        window.addEventListener("touchstart", function(e) {
+            if (currentMode !== "TIMER") return;
+            
+            // 只要計時器在 RUNNING 進行中，任何觸碰都「立刻且毫無延遲」地停錶
+            if (wcaState === "RUNNING") {
+                e.preventDefault();
+                triggerTimerInteraction();
+                return;
+            }
+
+            // 如果冷卻鎖啟用中，直接攔截並吃掉觸控事件，不允許任何動作
+            if (timerCooldownActive) {
+                e.preventDefault();
+                return;
+            }
+
+            touchStartY = e.changedTouches.screenY;
+            touchStartX = e.changedTouches.screenX;
+        }, { passive: false });
+
+        window.addEventListener("touchend", function(e) {
+            if (currentMode !== "TIMER") return;
+            if (wcaState === "RUNNING") return; // RUNNING 階段已在 touchstart 瞬間極速處理完畢
+
+            // 如果冷卻鎖啟用中，直接攔截並吃掉放開事件
+            if (timerCooldownActive) {
+                e.preventDefault();
+                return;
+            }
+
+            // 過濾點擊到功能按鈕或百科選單的情況
+            const isInteractiveElement = e.target.closest('button, input, label, .tab-btn, .fun-btn, .mode-badge, #ui-glow-box, .rank-modal-overlay, .rank-modal-content');
+            if (isInteractiveElement) return;
+
+            // 計算滑動距離
+            const deltaY = Math.abs(e.changedTouches.screenY - touchStartY);
+            const deltaX = Math.abs(e.changedTouches.screenX - touchStartX);
+
+            // [滾動保護防止誤觸]：滑動超過 15px 判定為滑動網頁，不開跑計時
+            if (deltaY > 15 || deltaX > 15) {
+                return; 
+            }
+
+            e.preventDefault();
+            triggerTimerInteraction();
+        }, { passive: false });
+
+
+        // ⚡ 升級版計時主控中心 (加入 1 秒鐘停錶冷卻防禦)
+        function triggerTimerInteraction() {
+            if (currentMode !== "TIMER") return;
+            
+            // 如果冷卻鎖被啟動了（剛停錶不到一秒），在 PC 端空白鍵或其他入口點擊時也進行雙重攔截保護
+            if (timerCooldownActive && wcaState !== "RUNNING") return;
+
+            const panel = document.getElementById("ui-live-timer-panel");
+            if (!panel) return;
+
+            if (wcaState === "IDLE") {
+                wcaState = "INSPECTION";
+                inspectionCountdown = 15;
+                panel.className = "live-timer-display timer-inspect text-color-green"; // 初始綠色
+                panel.innerText = "15";
+                
+                wcaIntervalId = setInterval(() => {
+                    inspectionCountdown--;
+                    if (inspectionCountdown <= 0) {
+                        clearInterval(wcaIntervalId);
+                        wcaState = "IDLE";
+                        panel.className = "live-timer-display";
+                        panel.innerText = "DNF (OVERTIME)";
+                        injectScoreDirectly(99999); 
+                    } else {
+                        panel.innerText = `${inspectionCountdown}`;
+                        
+                        // 根據剩餘秒數切換警告色
+                        if (inspectionCountdown <= 3) {
+                            panel.className = "live-timer-display timer-inspect text-color-red"; // 剩3秒或以下變紅
+                        } else if (inspectionCountdown <= 7) {
+                            panel.className = "live-timer-display timer-inspect text-color-yellow"; // 剩7秒或以下變黃
+                        }
+                    }
+                }, 1000);
+            } 
+            else if (wcaState === "INSPECTION") {
+                clearInterval(wcaIntervalId);
+                wcaState = "RUNNING";
+                wcaStartTime = Date.now();
+                panel.className = "live-timer-display timer-go";
+                panel.innerText = "0.00";
+                
+                wcaIntervalId = setInterval(() => {
+                    let elapsed = (Date.now() - wcaStartTime) / 1000;
+                    panel.innerText = elapsed.toFixed(2);
+                }, 10);
+            } 
+            else if (wcaState === "RUNNING") {
+                clearInterval(wcaIntervalId);
+                let finalTime = (Date.now() - wcaStartTime) / 1000;
+                wcaState = "IDLE";
+                panel.className = "live-timer-display";
+                panel.innerText = finalTime.toFixed(2) + "s";
+                
+                // 🔒【啟動 1 秒冷卻防線】：防止玩家手指殘留的微幅連擊誤觸下一次觀察
+                timerCooldownActive = true;
+                
+                // 讓計時面板此時文字稍微半透明，暗示玩家現在正在冷卻鎖定中（可自由決定是否保留此樣式變化）
+                panel.style.opacity = "0.6"; 
+
+                setTimeout(() => {
+                    timerCooldownActive = false; // 1 秒（1000毫秒）一到，解鎖系統
+                    panel.style.opacity = "1.0";  // 恢復面板高亮
+                }, 1000);
+                
+                // 自動將最終計時時間寫入並開啟天梯結算
+                injectScoreDirectly(finalTime);
+            }
+        }
+        
         // 電腦空白鍵監聽
         window.addEventListener("keydown", function(e) {
             if (currentMode !== "TIMER") return;
