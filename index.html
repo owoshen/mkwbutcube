@@ -396,6 +396,28 @@ display: inline-block;
     color: transparent;
     animation: unrealGlow 4s ease infinite;
 }
+    #ui-live-timer-panel {
+    font-size: 32px;         /* Much larger font configuration for readability */
+    font-weight: 900;
+    text-align: center;
+    transition: color 0.15s ease-in-out;
+}
+
+/* WCA Countdown Traffic Warning colors */
+.text-color-green {
+    color: #00ff66 !important;
+}
+
+.text-color-yellow {
+    color: #ffee00 !important; /* Yellow warning tier at <= 7s */
+    text-shadow: 0 0 10px rgba(255, 238, 0, 0.4);
+}
+
+.text-color-red {
+    color: #ff0055 !important; /* Serious crimson alert level at <= 3s */
+    text-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+}
+    
 </style>
 </head>
 <body>
