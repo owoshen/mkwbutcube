@@ -507,6 +507,10 @@ display: inline-block;
         <label for="bg-upload" class="upload-label">📸 Select Photos </label>
         <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
         <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
+   <!-- Add this right below your <div id="ui-scramble-display"> box -->
+<div style="text-align: center; color: #ffcc00; font-weight: bold; font-size: 14px; margin: 10px 0; letter-spacing: 1px; text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);">
+    🎁 🍰 HAPPY AUGUST 7TH BIRTHDAY! 🏎️💨
+</div>
     </div>
 </div>
 
@@ -1466,33 +1470,23 @@ function hideRankEncyclopedia() {
         modal.style.display = "none";
     }
 }
-    // 🎂 1-Day Exclusive Birthday Celebration Script
-function activateBirthdayMode() {
-    const today = new Date();
-    const month = today.getMonth() + 1; // Months are 0-11
-    const date = today.getDate();
+    // 🎂 FORCE BIRTHDAY MODE ACTIVATION (Manually remove this block on August 8th!)
+function forceBirthdayMode() {
+    // 1. Upgrade the top bar title text with your epic rainbow text animation
+    const topBarSpan = document.querySelector(".phone-container .top-bar span");
+    if (topBarSpan) {
+        topBarSpan.innerHTML = "🎂 <span class='unreal-gradient-text'>HAPPY BIRTHDAY TO ME! :3</span> 🎉";
+    }
 
-    // Check if it is precisely August 7th
-    if (month === 8 && date === 7) {
-        // 1. Upgrade the top bar title text smoothly without interrupting clicks
-        const topBarSpan = document.querySelector(".top-bar span");
-        if (topBarSpan) {
-            topBarSpan.innerHTML = "🎂 <span class='unreal-gradient-text'>TODAY IS ANGUS SHEN BIRTHDAY YAY! :3</span> 🎉";
-        }
-
-        // 2. Inject a cozy birthday cake decoration into the current active rank container
-        const tierTag = document.getElementById("ui-tier-name");
-        if (tierTag && !tierTag.innerText.includes("🍰")) {
-            tierTag.innerText = "🍰 " + tierTag.innerText + " 🍰";
-        }
-        
-        // 3. Optional: Add a gentle console log easter egg for code inspectors
-        console.log("%c🎉 HAPPY BIRTHDAY DEVELOPER! Keep smashing those Sub-10 runs! 🏎️🧩", "color: #ff007f; font-size: 16px; font-weight: bold;");
+    // 2. Inject festive birthday cakes directly into your current active rank container label
+    const tierTag = document.getElementById("ui-tier-name");
+    if (tierTag && !tierTag.innerText.includes("🍰")) {
+        tierTag.innerText = "🍰 " + tierTag.innerText + " 🍰";
     }
 }
 
-// Automatically execute the birthday check when the page finishes loading
-window.addEventListener("DOMContentLoaded", activateBirthdayMode);
+// Fire it off instantly as soon as the DOM loads
+window.addEventListener("DOMContentLoaded", forceBirthdayMode);
     
     </script>
 </body>
