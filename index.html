@@ -423,7 +423,7 @@ display: inline-block;
 <body>
         <div class="phone-container">
     <div class="top-bar">
-        <span>Life = Cube = Life :3</span>
+        <span>TODAY IS MY BIRTHDAYYYYYYYYYYYYYYY :3</span>
         <button class="mode-badge mode-cube" id="ui-mode-toggle" onclick="toggleMode()">MODE: CUBE</button>
     </div>
     <div class="tabs" id="ui-tabs-container">
@@ -507,10 +507,6 @@ display: inline-block;
         <label for="bg-upload" class="upload-label">📸 Select Photos </label>
         <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
         <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
-   <!-- Add this right below your <div id="ui-scramble-display"> box -->
-<div style="text-align: center; color: #ffcc00; font-weight: bold; font-size: 14px; margin: 10px 0; letter-spacing: 1px; text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);">
-    🎁 🍰 HAPPY AUGUST 7TH BIRTHDAY! 🏎️💨
-</div>
     </div>
 </div>
 
@@ -1470,23 +1466,7 @@ function hideRankEncyclopedia() {
         modal.style.display = "none";
     }
 }
-    // 🎂 FORCE BIRTHDAY MODE ACTIVATION (Manually remove this block on August 8th!)
-function forceBirthdayMode() {
-    // 1. Upgrade the top bar title text with your epic rainbow text animation
-    const topBarSpan = document.querySelector(".phone-container .top-bar span");
-    if (topBarSpan) {
-        topBarSpan.innerHTML = "🎂 <span class='unreal-gradient-text'>HAPPY BIRTHDAY TO ME! :3</span> 🎉";
-    }
-
-    // 2. Inject festive birthday cakes directly into your current active rank container label
-    const tierTag = document.getElementById("ui-tier-name");
-    if (tierTag && !tierTag.innerText.includes("🍰")) {
-        tierTag.innerText = "🍰 " + tierTag.innerText + " 🍰";
-    }
-}
-
-// Fire it off instantly as soon as the DOM loads
-window.addEventListener("DOMContentLoaded", forceBirthdayMode);
+    
     
     </script>
 </body>
