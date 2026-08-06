@@ -1466,6 +1466,34 @@ function hideRankEncyclopedia() {
         modal.style.display = "none";
     }
 }
+    // 🎂 1-Day Exclusive Birthday Celebration Script
+function activateBirthdayMode() {
+    const today = new Date();
+    const month = today.getMonth() + 1; // Months are 0-11
+    const date = today.getDate();
+
+    // Check if it is precisely August 7th
+    if (month === 8 && date === 7) {
+        // 1. Upgrade the top bar title text smoothly without interrupting clicks
+        const topBarSpan = document.querySelector(".top-bar span");
+        if (topBarSpan) {
+            topBarSpan.innerHTML = "🎂 <span class='unreal-gradient-text'>TODAY IS ANGUS SHEN BIRTHDAY YAY! :3</span> 🎉";
+        }
+
+        // 2. Inject a cozy birthday cake decoration into the current active rank container
+        const tierTag = document.getElementById("ui-tier-name");
+        if (tierTag && !tierTag.innerText.includes("🍰")) {
+            tierTag.innerText = "🍰 " + tierTag.innerText + " 🍰";
+        }
+        
+        // 3. Optional: Add a gentle console log easter egg for code inspectors
+        console.log("%c🎉 HAPPY BIRTHDAY DEVELOPER! Keep smashing those Sub-10 runs! 🏎️🧩", "color: #ff007f; font-size: 16px; font-weight: bold;");
+    }
+}
+
+// Automatically execute the birthday check when the page finishes loading
+window.addEventListener("DOMContentLoaded", activateBirthdayMode);
+    
     </script>
 </body>
 </html>
