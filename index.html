@@ -156,14 +156,37 @@ margin: 5px 0;
 transition: all 1.5s ease;
 }
 .style-unreal-text {
-background: linear-gradient(to right, #00f3ff, #ff00ff);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.6)) drop-shadow(0 0 30px rgba(255, 0, 255, 0.4));
+    /* 🎮 5段式電競鍵盤彩虹：紅 -> 黃 -> 綠 -> 藍 -> 紫 -> 紅 */
+    background: linear-gradient(90deg, #ff0000, #ffa500, #ffdd00, #00ff00, #00ffff, #ff00ff, #ff0000);
+    background-size: 200% auto; /* 橫向拉伸，讓波浪流動更絲滑 */
+    
+    /* 核心文字挖空技術 */
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    
+    /* 勻速滾動動畫：2.5秒跑一輪，像機械鍵盤一樣流暢 */
+    animation: rgbWaveAnimation 2.5s linear infinite; 
+    
+    /* 質感滿分的高飽和電競雙重外發光 */
+    filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.5)) drop-shadow(0 0 15px rgba(255, 0, 255, 0.3));
+    vertical-align: top;
 }
 .style-unreal-border {
-border-color: #ff00ff !important;
-box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(255, 0, 255, 0.1);
+    /* ⚡ 讓邊框顏色跟隨 RGB Wave，並加上外發光與內發光交織 */
+    border: 2px solid #ff0000 !important;
+    animation: rgbBorderAnimation 4s linear infinite;
+}
+
+/* 🎮 專門給邊框用的 RGB 霓虹滾動光暈軌道 */
+@keyframes rgbBorderAnimation {
+    0%   { border-color: #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), inset 0 0 15px rgba(255, 0, 0, 0.2); }
+    20%  { border-color: #ffff00; box-shadow: 0 0 20px rgba(255, 255, 0, 0.6), inset 0 0 15px rgba(255, 255, 0, 0.2); }
+    40%  { border-color: #00ff00; box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), inset 0 0 15px rgba(0, 255, 0, 0.2); }
+    60%  { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 0 15px rgba(0, 255, 255, 0.2); }
+    80%  { border-color: #ff00ff; box-shadow: 0 0 20px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2); }
+    100% { border-color: #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), inset 0 0 15px rgba(255, 0, 0, 0.2); }
 }
 .grid-stats {
 display: grid;
@@ -383,18 +406,29 @@ display: inline-block;
 }
 
 /* 🏆 UNREAL 流動漸變霓虹動畫 */
-@keyframes unrealGlow {
+/* 🎮 電競鍵盤極速彩虹光波 (RGB Wave) */
+@keyframes rgbWaveAnimation {
     0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; } /* 橫向 200% 移動，形成無縫循環流水 */
 }
-.unreal-gradient-text {
-    background: linear-gradient(90deg, #ff007f, #9900ff, #00ffff, #ff007f);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    animation: unrealGlow 4s ease infinite;
+
+.unreal-rgb-wave {
+    /* 五段式高飽和度電競彩虹：紅 -> 黃 -> 綠 -> 藍 -> 紫 -> 紅 */
+    background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #ff00ff, #ff0000);
+    background-size: 200% auto; /* 橫向拉伸，讓波浪更絲滑長遠 */
+    
+    /* 核心挖空字體 */
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    
+    /* 勻速滾動：2.5秒流動一輪，可以自由調整快慢 */
+    animation: rgbWaveAnimation 2.5s linear infinite; 
+    
+    /* 加上高質感的電競螢光外發光殘影 */
+    filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.4)) drop-shadow(0 0 12px rgba(255, 0, 255, 0.2));
+    display: inline-block;
 }
     #ui-live-timer-panel {
     font-size: 32px;         /* Much larger font configuration for readability */
@@ -1374,7 +1408,7 @@ function parseCSTimerTime(inputStr) {
             // 核心段位配置數據
 // 核心段位配置數據
 const RANK_CONFIG = [
-    { min: 9999, name: "[UNREAL]", color: "linear-gradient" },
+    { min: 9999, name: "[UNREAL]", color: "rgb-wave" },
     { min: 9800, name: "[LEGENDARY 5]", color: "#ff007f" },
     { min: 9600, name: "[LEGENDARY 4]", color: "#ff00bb" },
     { min: 9400, name: "[LEGENDARY 3]", color: "#ff00ff" },
@@ -1407,7 +1441,7 @@ function getCurrentRankObj(vr) {
     return RANK_CONFIG.find(rank => vr >= rank.min) || RANK_CONFIG[RANK_CONFIG.length - 1];
 }
 
-// 🏆 開啟段位百科
+
 // 🏆 開啟段位百科 (保持各段位獨立顏色)
 function openRankModal() {
     const container = document.getElementById("rank-list-container");
@@ -1439,13 +1473,16 @@ function openRankModal() {
         }
 
         // ⚡【修正重點】：顏色改為讀取該列段位獨立的 `rank.color`
+        // 在 openRankModal() 的 RANK_CONFIG.forEach 迴圈中修改：
         let styleAttribute = "";
         let unrealClass = "";
-        
-        if (rank.color === "linear-gradient") {
-            unrealClass = "unreal-gradient-text"; // 如果是 UNREAL，依然套用炫彩動畫
+
+        if (rank.color === "rgb-wave") {
+            // ⚡ 1. 確保給 UNREAL 正確加上這行類名
+            unrealClass = "style-unreal-text"; 
         } else {
-            styleAttribute = `style="color: ${rank.color};"`; // 獨立顏色
+            // ⚡ 2. 【核心修正】：改用反引號 `，並且修正為標準的 style="color: ..." 語法！
+            styleAttribute = `style="color: ${rank.color};"`;
         }
 
         row.innerHTML = `
@@ -1466,8 +1503,29 @@ function hideRankEncyclopedia() {
         modal.style.display = "none";
     }
 }
-    
-    
+ // 🎂 只利用你現有的 rgb-wave 類名，100% 完美連動！
+        function forceBirthdayMode() {
+            const topBarSpan = document.querySelector(".phone-container .top-bar span");
+            if (topBarSpan) {
+                // 1. 先寫入乾淨的純文字
+                topBarSpan.textContent = " TODAY, I TURNED 16!!! :3";
+                
+                // 2. ⚡【關鍵修正】：直接套用你原本大數字成功運行的那個 class 名稱！
+                // (註：如果你之前的 class 是叫 style-unreal-text，請把下面這行改成 "style-unreal-text")
+                topBarSpan.className = "unreal-rgb-wave"; 
+                
+                // 3. 🛡️【雙重保險】：直接用 JS 強制把文字原本的白色挖空變透明，保證 100% 噴出彩虹！
+                topBarSpan.style.color = "transparent";
+                topBarSpan.style.textShadow = "none";
+            }
+            
+            const tierTag = document.getElementById("ui-tier-name");
+            if (tierTag && !tierTag.innerText.includes("🍰")) {
+                tierTag.innerText = "" + tierTag.innerText + "";
+            }
+        }
+        
+        window.addEventListener("DOMContentLoaded", forceBirthdayMode);
     </script>
 </body>
 </html>
