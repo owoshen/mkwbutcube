@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Don't Think - Just Solve (v5452)</title>
+<title>Don't Think - Just Solve (v5462)</title>
 <style>
 :root {
 --bg-color: #0c0a0f;
@@ -404,6 +404,38 @@ display: inline-block;
     justify-content: space-between;
     align-items: center;
 }
+/* 提交按鈕基礎樣式 */
+.btn-submit {
+    height: 32px;             /* 固定高度，跟左邊的文字/輸入框切齊 */
+    padding: 0 20px;          /* 左右內襯留白 */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    border: none;
+    letter-spacing: 2px;
+}
+
+/* 🔒 灰色禁用狀態 */
+.btn-disabled {
+    background-color: #2D3748 !important;
+    color: #718096 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}
+
+/* 🔓 藍色激活狀態 */
+.btn-active {
+    background-color: #3182CE !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    box-shadow: 0 0 10px rgba(49, 130, 206, 0.5);
+}
+.btn-active:hover {
+    background-color: #2B6CB0 !important;
+    box-shadow: 0 0 15px rgba(49, 130, 206, 0.8);
+}
+
 
 /* 🏆 UNREAL 流動漸變霓虹動畫 */
 /* 🎮 電競鍵盤極速彩虹光波 (RGB Wave) */
@@ -559,9 +591,17 @@ display: inline-block;
         <div class="ao5-slot">-</div>
         <div class="ao5-slot">-</div>
     </div>
+
     <div class="input-section">
         <input type="number" step="0.01" id="manual-input" placeholder="0.00" onkeydown="handleEnter(event)">
         <span class="time-enter-hint" id="ui-input-hint">TIME + ENTER</span>
+        <div class="submit-container" style="display: inline-flex; align-items: center; gap: 20px;">
+    <!-- 你原本的輸入/顯示元素可以在這 -->
+    
+    <!-- 新增的提交按鈕 -->
+    <button id="ui-submit-match" class="btn-submit btn-disabled" disabled>SUBMIT</button>
+</div>
+
         <div class="live-timer-display" id="ui-live-timer-panel" onclick="triggerTimerInteraction()">TAP / SPACE TO INSPECT</div>
         <div class="fun-input-group" id="ui-fun-inputs">
             <input type="number" id="fun-vr-field" placeholder="Enter VR (1-9999)">
@@ -584,6 +624,8 @@ display: inline-block;
         <label for="bg-upload" class="upload-label">📸 Select Photos </label>
         <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
         <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
+    <!-- 在你的計時器 / 文字輸入區塊旁邊加上這顆按鈕 -->
+
     </div>
 </div>
 
@@ -859,7 +901,7 @@ display: inline-block;
             return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)) * stdDev + mean;
         }
 
-        // ⚡【天梯池核心注入端】
+                // ⚡【天梯池核心注入端】（修改後的尾端）
         function injectScoreDirectly(val) {
             if (currentSolvePool.length >= 5) return;
             currentSolvePool.push(val);
@@ -876,10 +918,30 @@ display: inline-block;
                 };
             }
             generateAndDisplayScramble();
+
+            // 🛑 【V5460 提交攔截機制】
             if (currentSolvePool.length === 5) {
-                processAo5Calculation();
+                // 1. 點亮藍色 SUBMIT 按鈕，解除禁用
+                const submitBtn = document.getElementById("ui-submit-match");
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "btn-submit btn-active";
+                }
             }
         }
+// 🏆 監聽 SUBMIT 按鈕：只有點擊時才真正結算天梯與 VR
+document.getElementById("ui-submit-match").addEventListener("click", function() {
+    if (currentSolvePool.length === 5) {
+        
+        // 🚀 執行原本的結算與排位計算流程
+        processAo5Calculation();
+        
+        // 🔒 結算完畢後，將按鈕重設回灰色禁用狀態，等待下一輪 5 轉
+        this.disabled = true;
+        this.className = "btn-submit btn-disabled";
+    }
+});
+
 // 🏎‍🟀 csTimer Implicit Time Parser Logic
 function parseCSTimerTime(inputStr) {
     inputStr = inputStr.trim();
@@ -1586,7 +1648,7 @@ function hideRankEncyclopedia() {
             const topBarSpan = document.querySelector(".phone-container .top-bar span");
             if (topBarSpan) {
                 // 1. 先寫入乾淨的純文字
-                topBarSpan.textContent = "VERSION: 5452";
+                topBarSpan.textContent = "version_5462";
                 
                 // 2. ⚡【關鍵修正】：直接套用你原本大數字成功運行的那個 class 名稱！
                 // (註：如果你之前的 class 是叫 style-unreal-text，請把下面這行改成 "style-unreal-text")
