@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Don't Think - Just Solve (v5441)</title>
+<title>Don't Think - Just Solve (v5452)</title>
 <style>
 :root {
 --bg-color: #0c0a0f;
@@ -451,7 +451,50 @@ display: inline-block;
     color: #ff0055 !important; /* Serious crimson alert level at <= 3s */
     text-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
 }
-    
+    /* 🏆 金屬漸層字體核心技術 */
+/* 🏆 排行榜前三名與名次文字：電競發光霓虹配色 */
+
+/* 🥇 1st 第一名：純金黃光暈 */
+.text-gold, .rank-1 .bot-rank, .rank-1 .bot-name, .rank-1 .bot-time {
+    color: #FFE07D !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 8px rgba(255, 224, 125, 0.6), 0 0 2px rgba(255, 224, 125, 0.8) !important;
+    -webkit-text-fill-color: #FFE07D !important; /* 強制覆蓋透明 Bug */
+}
+
+/* 🥈 2nd 第二名：銀白鎢光暈 */
+.text-silver, .rank-2 .bot-rank, .rank-2 .bot-name, .rank-2 .bot-time {
+    color: #E2E8F0 !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 8px rgba(226, 232, 240, 0.5), 0 0 2px rgba(226, 232, 240, 0.7) !important;
+    -webkit-text-fill-color: #E2E8F0 !important;
+}
+
+/* 🥉 3rd 第三名：青銅古銅光暈 */
+.text-bronze, .rank-3 .bot-rank, .rank-3 .bot-name, .rank-3 .bot-time {
+    color: #FFB076 !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 8px rgba(255, 176, 118, 0.5), 0 0 2px rgba(255, 176, 118, 0.7) !important;
+    -webkit-text-fill-color: #FFB076 !important;
+}
+
+/* 排行榜前三名整列文字（包含名字與時間）的高亮配色 */
+.rank-1 .bot-rank, .rank-1 .bot-name, .rank-1 .bot-time {
+    background: linear-gradient(135deg, #FFE07D, #F5AF19);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.rank-2 .bot-rank, .rank-2 .bot-name, .rank-2 .bot-time {
+    background: linear-gradient(135deg, #FFFFFF, #BCC5CE);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.rank-3 .bot-rank, .rank-3 .bot-name, .rank-3 .bot-time {
+    background: linear-gradient(135deg, #F9D976, #C9733E);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 </style>
 </head>
 <body>
@@ -1187,100 +1230,99 @@ function parseCSTimerTime(inputStr) {
         }
 
         function runMatchEngine(calculatedAo5) {
-            if (!persistentLobby || persistentLobby.length === 0) initLobby();
-            totalMatches[currentUniverse]++;
-            const config = UNIVERSE_CONFIG[currentUniverse];
-            const baseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
-            let matchResults = [];
+    if (!persistentLobby || persistentLobby.length === 0) initLobby();
+    totalMatches[currentUniverse]++;
+    const config = UNIVERSE_CONFIG[currentUniverse];
+    const baseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
+    let matchResults = [];
 
-            persistentLobby.forEach(bot => {
-                const vrDiff = bot.vr - playerVR[currentUniverse];
-                const botBaseline = baseline * (1 - (vrDiff / 25000));
-                const botSkillFactor = Math.max(100, bot.vr);
-                const humanConsistency = 0.03 + (10000 - botSkillFactor) / 100000;
+    persistentLobby.forEach(bot => {
+        const vrDiff = bot.vr - playerVR[currentUniverse];
+        const botBaseline = baseline * (1 - (vrDiff / 25000));
+        const botSkillFactor = Math.max(100, bot.vr);
+        const humanConsistency = 0.03 + (10000 - botSkillFactor) / 100000;
 
-                let mult = gaussianRandom(1.0, humanConsistency);
-                mult = Math.max(0.75, Math.min(1.35, mult));
-                if (Math.random() < 0.01) mult *= 0.85;
+        let mult = gaussianRandom(1.0, humanConsistency);
+        mult = Math.max(0.75, Math.min(1.35, mult));
+        if (Math.random() < 0.01) mult *= 0.85;
 
-                matchResults.push({
-                    name: bot.name,
-                    vr: Math.max(1, bot.vr),
-                    time: parseFloat((Math.max(config.minB, botBaseline * mult)).toFixed(2)),
-                    isPlayer: false
-                });
-            });
+        matchResults.push({
+            name: bot.name,
+            vr: Math.max(1, bot.vr),
+            time: parseFloat((Math.max(config.minB, botBaseline * mult)).toFixed(2)),
+            isPlayer: false
+        });
+    });
 
-            matchResults.push({ name: "YOU", vr: playerVR[currentUniverse], time: calculatedAo5, isPlayer: true });
-            matchResults.sort((a, b) => a.time - b.time);
-            const playerRank = matchResults.findIndex(x => x.isPlayer) + 1;
-            if (playerRank <= 3) podiumCount[currentUniverse]++;
+    matchResults.push({ name: "YOU", vr: playerVR[currentUniverse], time: calculatedAo5, isPlayer: true });
+    matchResults.sort((a, b) => a.time - b.time);
+    const playerRank = matchResults.findIndex(x => x.isPlayer) + 1;
+    if (playerRank <= 3) podiumCount[currentUniverse]++;
 
-            const totalBotVR = persistentLobby.reduce((sum, b) => sum + b.vr, 0);
-            const avgBotVR = Math.max(1, Math.round(totalBotVR / 23));
+    const totalBotVR = persistentLobby.reduce((sum, b) => sum + b.vr, 0);
+    const avgBotVR = Math.max(1, Math.round(totalBotVR / 23));
 
-            let bMultiplier = avgBotVR / Math.max(1, playerVR[currentUniverse]);
-            bMultiplier = Math.min(1.2, Math.max(0.8, bMultiplier));
+    let bMultiplier = avgBotVR / Math.max(1, playerVR[currentUniverse]);
+    bMultiplier = Math.min(1.2, Math.max(0.8, bMultiplier));
 
-            const rankBonus = 1 + (12 - playerRank) * 0.02;
-            const timeDiff = baseline - calculatedAo5;
-            let vrChange = (timeDiff / 0.03) * bMultiplier;
+    const rankBonus = 1 + (12 - playerRank) * 0.02;
+    const timeDiff = baseline - calculatedAo5;
+    let vrChange = (timeDiff / 0.03) * bMultiplier;
 
-            if (vrChange >= 0) {
-                vrChange = vrChange * rankBonus;
-            } else {
-                vrChange = vrChange * (2 - rankBonus);
-            }
+    // 巧妙的翻轉正負邏輯，保留並優化
+    if (vrChange >= 0) {
+        vrChange = vrChange * rankBonus;
+    } else {
+        vrChange = vrChange * (2 - rankBonus);
+    }
 
-            if (playerRank === 1) vrChange += 5;
-            if (playerRank === 2) vrChange += 4;
-            if (playerRank === 3) vrChange += 3;
-            if (playerRank === 4) vrChange += 2;
-            if (playerRank === 5) vrChange += 1;
-           
-            vrChange = Math.round(vrChange);
+    // 名次額外獎勵
+    if (playerRank === 1) vrChange += 5;
+    if (playerRank === 2) vrChange += 4;
+    if (playerRank === 3) vrChange += 3;
+    if (playerRank === 4) vrChange += 2;
+    if (playerRank === 5) vrChange += 1;
+   
+    vrChange = Math.round(vrChange);
 
-            if (playerRank === 1) vrChange = Math.max(15, vrChange);
-            if (playerRank === 24) vrChange = Math.min(-15, vrChange);
+    // 🏎️ 安全修復：防止時間進步卻因為名次被 Math.min 扣成負分的 Bug
+    if (playerRank === 1) vrChange = Math.max(15, vrChange);
+    if (playerRank === 24) {
+        if (vrChange < 0) {
+            vrChange = Math.min(-15, vrChange); // 退步且最後一名，加重懲罰，至少扣 15
+        } else {
+            vrChange = Math.max(-15, vrChange - 25); // 進步但最後一名，給予扣分削減，但壓制在最慘 -15
+        }
+    }
 
-            const oldVR = playerVR[currentUniverse];
-            playerVR[currentUniverse] = Math.max(1, Math.min(10000, playerVR[currentUniverse] + vrChange));
+    const oldVR = playerVR[currentUniverse];
+    playerVR[currentUniverse] = Math.max(1, Math.min(10000, playerVR[currentUniverse] + vrChange));
 
-            let isNewRecord = false;
-            if (playerVR[currentUniverse] > peakVR[currentUniverse]) {
-                peakVR[currentUniverse] = playerVR[currentUniverse];
-                isNewRecord = true;
-            }
+    let isNewRecord = false;
+    if (playerVR[currentUniverse] > peakVR[currentUniverse]) {
+        peakVR[currentUniverse] = playerVR[currentUniverse];
+        isNewRecord = true;
+    }
 
-            const nextBaseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
-                        // 🏎️ 【VR 滾動飙升動畫引擎】
-            let currentTick = oldVR;
+    const nextBaseline = config.base + (10000 - playerVR[currentUniverse]) / config.div;
+    
+    // === 🏎️ 【VR 滾動动画引擎】 ===
+    let currentTick = oldVR;
+    clearInterval(window.tickInterval);
+    let step = Math.ceil(Math.abs(playerVR[currentUniverse] - oldVR) / 50) || 1;
+
+    window.tickInterval = setInterval(() => {
+        if (currentTick === playerVR[currentUniverse]) {
             clearInterval(window.tickInterval);
-            let step = Math.ceil(Math.abs(playerVR[currentUniverse] - oldVR) / 50) || 1;
-
-            window.tickInterval = setInterval(() => {
-                if (currentTick === playerVR[currentUniverse]) {
-                    clearInterval(window.tickInterval);
-                    document.getElementById("ui-player-vr").innerText = playerVR[currentUniverse];
-                    document.getElementById("ui-peak-vr").innerText = peakVR[currentUniverse];
-                    document.getElementById("ui-baseline-val").innerText = nextBaseline.toFixed(2) + "s";
-                    updateTierGraphics(playerVR[currentUniverse]);
-                    generateAndDisplayScramble();
-                } else {
-                    if (currentTick < playerVR[currentUniverse]) {
-                        currentTick = Math.min(playerVR[currentUniverse], currentTick + step);
-                    } else {
-                        currentTick = Math.max(playerVR[currentUniverse], currentTick - step);
-                    }
-                    document.getElementById("ui-player-vr").innerText = currentTick;
-                    updateTierGraphics(currentTick);
-                }
-            }, 10);
-
+            
+            // 【優化點】滾動完畢後，再一口氣同步更新所有相關 UI 數據，畫面更具衝擊力！
+            document.getElementById("ui-player-vr").innerText = playerVR[currentUniverse];
+            document.getElementById("ui-peak-vr").innerText = peakVR[currentUniverse];
+            document.getElementById("ui-baseline-val").innerText = nextBaseline.toFixed(2) + "s";
             document.getElementById("ui-total-matches").innerText = totalMatches[currentUniverse];
+            
             let rate = ((podiumCount[currentUniverse] / totalMatches[currentUniverse]) * 100).toFixed(0);
             document.getElementById("ui-podium-rate").innerText = `${rate}% / ${podiumCount[currentUniverse]}`;
-
             document.getElementById("ui-match-rank").innerText = `${playerRank}${getRankSuffix(playerRank)} / 24`;
             document.getElementById("ui-current-ao5").innerText = calculatedAo5.toFixed(2) + "s";
             document.getElementById("ui-room-avg").innerText = avgBotVR;
@@ -1296,13 +1338,21 @@ function parseCSTimerTime(inputStr) {
             }
 
             document.getElementById("ui-new-record").style.visibility = isNewRecord ? "visible" : "hidden";
+            updateTierGraphics(playerVR[currentUniverse]);
+            generateAndDisplayScramble();
             saveGameData();
 
+            // 渲染排行榜（加入前三名高亮 Class）
             const list = document.getElementById("ui-leaderboard-list");
             list.innerHTML = "";
             matchResults.forEach((row, idx) => {
                 const item = document.createElement("div");
-                item.className = row.isPlayer ? "leaderboard-row row-player" : "leaderboard-row";
+                
+                // 動態判定額外樣式類名
+                let rowClass = row.isPlayer ? "leaderboard-row row-player" : "leaderboard-row";
+                if (idx < 3) rowClass += ` rank-high rank-${idx + 1}`; // 額外注入 rank-1, rank-2, rank-3
+
+                item.className = rowClass;
                 item.style.animation = `slideInRow 0.3s forwards ${idx * 0.04}s`;
                 item.innerHTML = `
                     <div class="col-left">
@@ -1318,12 +1368,40 @@ function parseCSTimerTime(inputStr) {
             });
 
             cycleLobby();
+        } else {
+            if (currentTick < playerVR[currentUniverse]) {
+                currentTick = Math.min(playerVR[currentUniverse], currentTick + step);
+            } else {
+                currentTick = Math.max(playerVR[currentUniverse], currentTick - step);
+            }
+            document.getElementById("ui-player-vr").innerText = currentTick;
+            updateTierGraphics(currentTick);
         }
+    }, 10);
+}
+// ============= 🏆 強制覆蓋：名次金銀銅變色大引擎 =============
+setTimeout(() => {
+    const rankEl = document.getElementById("ui-match-rank");
+    if (rankEl) {
+        // 先清除舊的金銀銅顏色樣式
+        rankEl.classList.remove("text-gold", "text-silver", "text-bronze");
+
+        // 根據名次（playerRank）注入對應的漸層色
+        if (playerRank === 1) rankEl.classList.add("text-gold");
+        else if (playerRank === 2) rankEl.classList.add("text-silver");
+        else if (playerRank === 3) rankEl.classList.add("text-bronze");
+    }
+}, 15); // 微調延遲，確保在滾動動畫結算後才執行
+// ==========================================================
+
 
         function getRankSuffix(r) {
             if (r === 1) return "st";
             if (r === 2) return "nd";
             if (r === 3) return "rd";
+            if (r === 21) return "st";
+            if (r === 22) return "nd";
+            if (r === 23) return "rd";
             return "th";
         }
 
@@ -1508,7 +1586,7 @@ function hideRankEncyclopedia() {
             const topBarSpan = document.querySelector(".phone-container .top-bar span");
             if (topBarSpan) {
                 // 1. 先寫入乾淨的純文字
-                topBarSpan.textContent = "VERSION: 5441";
+                topBarSpan.textContent = "VERSION: 5452";
                 
                 // 2. ⚡【關鍵修正】：直接套用你原本大數字成功運行的那個 class 名稱！
                 // (註：如果你之前的 class 是叫 style-unreal-text，請把下面這行改成 "style-unreal-text")
