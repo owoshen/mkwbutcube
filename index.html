@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Don't Think - Just Solve (v5462)</title>
+<title>Don't Think - Just Solve (v5562)</title>
 <style>
 :root {
 --bg-color: #0c0a0f;
@@ -527,12 +527,85 @@ display: inline-block;
     -webkit-text-fill-color: transparent;
 }
 
+/* 頂部按鈕容器間距 */
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* 兩個按鈕中間的黃金間距 */
+}
+
+/* 基礎按鈕樣式 */
+.nav-control-btn {
+    background: rgba(255, 255, 255, 0.05); /* 輕微透明底色 */
+    color: #E2E8F0; /* 灰白高質感文字 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 特別針對問號按鈕做微調，讓它更接近正方形/圓角 */
+.btn-qa {
+    padding: 4px 10px;
+    font-weight: bold;
+}
+
+/* 點擊與懸停時的科技藍微光（跟你的計時器呼叫） */
+.nav-control-btn:hover, .nav-control-btn:active {
+    background: rgba(49, 130, 206, 0.2);
+    border-color: rgba(49, 130, 206, 0.6);
+    color: #3182CE;
+    box-shadow: 0 0 8px rgba(49, 130, 206, 0.3);
+}
+/* 彈窗背景遮罩 */
+.custom-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px); /* 背景模糊 */
+    display: none; /* 預設隱藏 */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* 彈窗主體盒 */
+.modal-content {
+    background: #1A202C;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 24px;
+    border-radius: 12px;
+    width: 85%;
+    max-width: 400px;
+    text-align: center;
+    color: #E2E8F0;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* 關閉按鈕 */
+.modal-close-btn {
+    margin-top: 15px;
+    background: #3182CE;
+    color: white;
+    border: none;
+    padding: 6px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 </style>
 </head>
 <body>
         <div class="phone-container">
     <div class="top-bar">
-        <span>Life = Cube = Life :3</span>
+        <span>version_5462</span>
+        <div class="header-controls">
+        <button id="btn-settings" class="nav-control-btn">Settings</button>
+        <button id="btn-help" class="nav-control-btn btn-qa">?</button>
+    </div>
         <button class="mode-badge mode-cube" id="ui-mode-toggle" onclick="toggleMode()">MODE: CUBE</button>
     </div>
     <div class="tabs" id="ui-tabs-container">
@@ -625,6 +698,100 @@ display: inline-block;
         <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
         <button class="upload-label" onclick="forceClearAllData()" style="background: #4a1525; color: var(--neon-pink); border-color: rgba(255, 51, 153, 0.4); font-weight: bold;">🗑️ Reset Data</button>
     <!-- 在你的計時器 / 文字輸入區塊旁邊加上這顆按鈕 -->
+<!-- ⚙️ 設定彈窗 -->
+<div id="modal-settings" class="custom-modal">
+    <div class="modal-content">
+        <h3>SYSTEM SETTINGS</h3>
+        <p>More features coming soon. Stay tuned! ;D</p>
+        <button class="modal-close-btn" onclick="closeModal('modal-settings')">CLOSE</button>
+    </div>
+</div>
+
+<!-- ❓ 幫助手冊彈窗 -->
+<div id="modal-help" class="custom-modal">
+    <div class="modal-content">
+<div class="modal-content" style="max-height: 80vh; overflow-y: auto; text-align: left; padding: 25px;">
+    <h2 style="text-align: center; color: #3182CE; margin-bottom: 20px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(49,130,206,0.5);">🏆 USER MANUAL</h2>
+    
+    <!-- 1. THE CORE -->
+    <div class="manual-section">
+        <h4>1. THE CORE</h4>
+        <ul class="manual-list">
+            <li><b style="color: #63B3ED;">Scramble & Solve</b>: Look at the top scramble, solve ur cube, and enter ur time!</li>
+            <li><b style="color: #4FD1C5;">Ao5 Set</b>: Repeat 5 times to complete an Average of 5 (Ao5) set.</li>
+            <li><b style="color: #9F7AEA;">Live Bot Lobby</b>: Your final Ao5 is automatically pinned against <span style="color: #B794F4; font-weight: bold;">23 live bots</span>!</li>
+            <li><b style="color: #48BB78;">Baseline Target</b>: Beat your dynamic <span style="color: #48BB78; font-weight: bold;">Baseline</span> time to gain Versus Rating (VR).</li>
+            <li><b style="color: #F56565;">Rating Drop</b>: If your Ao5 falls behind the baseline, your rating will <span style="color: #F56565; font-weight: bold; text-shadow: 0 0 8px rgba(245,101,101,0.6);">DROP</span>!</li>
+            <li><b style="color: #ED8936;">Rank Titles</b>: Color and rank title change as your VR rises up to 9999 VR.</li>
+            <li><b style="color: #D69E2E;">Secret Layout</b>: Reaching 9999 unlocks a secret <span style="color: #F6E05E; font-weight: bold; text-shadow: 0 0 8px rgba(246,224,94,0.6);">animated custom layout</span> effect!</li>
+        </ul>
+    </div>
+
+    <!-- 2. MULTI-EVENT TRACKING -->
+    <div class="manual-section">
+        <h4>2. MULTI-EVENT TRACKING</h4>
+        <ul class="manual-list">
+            <li><b style="color: #38B2AC;">4 Supported Events</b>: Toggle between <span style="color: #E6FFFA; font-weight: bold; background: rgba(56,178,172,0.2); padding: 1px 6px; border-radius: 4px;">3x3, 2x2, 4x4, and OH</span>.</li>
+            <li><b style="color: #00B5D8;">Independent Stats</b>: Each event tracks its own separate VR, peak history, and podiums.</li>
+        </ul>
+    </div>
+
+    <!-- 3. +2 & DNFs -->
+    <div class="manual-section">
+        <h4>3. +2 & DNFs</h4>
+        <ul class="manual-list">
+            <li><b style="color: #E53E3E;">Oh No, a Bad Solve?</b>: Tap any display time slot to cycle through penalties:</li>
+            <li style="list-style-type: none; margin-left: 5px; margin-bottom: 6px;"> <b style="color: #ECC94B;">1st Click</b>: Applies a <span style="color: #ECC94B; font-weight: bold; text-shadow: 0 0 6px rgba(236,201,75,0.4);">+2s Penalty</span></li>
+            <li style="list-style-type: none; margin-left: 5px; margin-bottom: 6px;"> <b style="color: #F56565;">2nd Click</b>: Applies a <span style="color: #F56565; font-weight: bold; text-shadow: 0 0 6px rgba(245,101,101,0.4);">DNF (Did Not Finish)</span></li>
+            <li style="list-style-type: none; margin-left: 5px; margin-bottom: 6px;"> <b style="color: #A0AEC0;">3rd Click</b>: Resets back to your Normal original time.</li>
+            <li style="color: #FC8181; font-weight: bold; margin-top: 8px; list-style-type: none; text-shadow: 0 0 8px rgba(252,129,129,0.5);">⚠️ Warning: a DNF Ao5 will cause an INSTANT -200 VR LOSS!!!</li>
+        </ul>
+    </div>
+
+    <!-- 4. FUN MODE -->
+    <div class="manual-section">
+        <h4>4. FUN MODE</h4>
+        <ul class="manual-list">
+            <li><b style="color: #ED64A6;">Skip the Grind</b>: Don't have time to climb the all that? Use the sandbox mode!</li>
+            <li><b style="color: #F687B3;">How to Toggle</b>: Tap the <span style="color: #FFF; font-weight: bold; background: rgba(237,100,166,0.2); padding: 1px 4px; border-radius: 3px;">[MODE: CUBE]</span> badge to switch to <span style="color: #ED64A6; font-weight: bold;">[MODE: FUN]</span>.</li>
+            <li><b style="color: #D53F8C;">Custom Rating</b>: Directly type any value (1 - 9999 VR) to preview the 9999 <span style="color: #FBB6CE; font-weight: bold;">[UNREAL]</span> master layout!</li>
+        </ul>
+    </div>
+
+    <!-- 5. TIMER MODE -->
+    <div class="manual-section">
+        <h4>5. TIMER MODE</h4>
+        <ul class="manual-list">
+            <li><b style="color: #4299E1;">An In-game Timer</b>: Don't have a timer with you? Use the timer model!</li>
+            <li><b style="color: #63B3ED;">How to Toggle</b>: Tap the <span style="color: #FFF; font-weight: bold; background: rgba(66,153,225,0.2); padding: 1px 4px; border-radius: 3px;">[MODE: CUBE]</span> badge to switch to <span style="color: #4299E1; font-weight: bold;">[MODE: TIMER]</span>.</li>
+            <li><b style="color: #3182CE;">Time Your Solves</b>: Press anywhere to start a <span style="color: #90CDF4; font-weight: bold;">15s inspection</span>. Press again to start the timer. Press again to stop the timer.</li>
+        </ul>
+    </div>
+
+    <!-- 6. BACKGROUND WALLPAPERS -->
+    <div class="manual-section">
+        <h4>6. BACKGROUND WALLPAPERS</h4>
+        <ul class="manual-list">
+            <li><b style="color: #38A169;">Lock in with Waifus</b>: Scroll to the very bottom to customize your backdrop.</li>
+            <li><b style="color: #48BB78;">Gallery Upload</b>: Tap <span style="color: #C6F6D5; font-weight: bold;">"Select Photos from Gallery"</span> to insert your favorite anime character!</li>
+            <li><i style="color: #9AE6B4;">Note: The middle portion of your photo will be layered behind the main grid panel.</i></li>
+        </ul>
+    </div>
+
+    <!-- !!!FRIENDLY REMINDER!!! -->
+    <div class="manual-reminder" style="background: rgba(229, 62, 62, 0.15); border-left: 4px solid #E53E3E; padding: 14px; margin-top: 25px; border-radius: 4px; box-shadow: 0 0 15px rgba(229,62,62,0.1);">
+        <h5 style="color: #F56565; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px; font-weight: bold; text-shadow: 0 0 6px rgba(245,101,101,0.4);">📢 !!!FRIENDLY REMINDER!!!</h5>
+        <ul class="manual-list" style="color: #CBD5E0; font-size: 13px; padding-left: 15px;">
+            <li><b style="color: #FFA5A5;">Keep It Fair</b>: Plz don't cherry-pick best times or enter fake scores. It completely ruins the competitive spirit of the ranking system!!!</li>
+            <li><b style="color: #FEB2B2;">Don't Rage Quit</b>: Do not quit mid-Ao5 even if ur first few solves went horribly. Overcoming bad rounds and accepting the VR loss is exactly how u improve.</li>
+            <li style="list-style-type: none; font-weight: bold; margin-top: 8px; color: #FFF; font-size: 14px; letter-spacing: 1px;">👉 <span style="color: #F56565; text-shadow: 0 0 8px rgba(245,101,101,0.6);">TRUST THE PROCESS!!!</span></li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 25px;">
+        <button class="modal-close-btn" onclick="closeModal('modal-help')" style="width: 100%; padding: 12px; font-size: 14px; font-weight: bold; letter-spacing: 1px;">GOT IT</button>
+    </div>
+</div>
 
     </div>
 </div>
@@ -1648,7 +1815,7 @@ function hideRankEncyclopedia() {
             const topBarSpan = document.querySelector(".phone-container .top-bar span");
             if (topBarSpan) {
                 // 1. 先寫入乾淨的純文字
-                topBarSpan.textContent = "version_5462";
+                topBarSpan.textContent = "VER_5562";
                 
                 // 2. ⚡【關鍵修正】：直接套用你原本大數字成功運行的那個 class 名稱！
                 // (註：如果你之前的 class 是叫 style-unreal-text，請把下面這行改成 "style-unreal-text")
@@ -1666,6 +1833,27 @@ function hideRankEncyclopedia() {
         }
         
         window.addEventListener("DOMContentLoaded", forceBirthdayMode);
+        // 綁定頂部按鈕點擊事件
+document.getElementById("btn-settings").onclick = function() {
+    document.getElementById("modal-settings").style.display = "flex";
+};
+
+document.getElementById("btn-help").onclick = function() {
+    document.getElementById("modal-help").style.display = "flex";
+};
+
+// 關閉彈窗函數
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+// 點擊彈窗外部黑底也可以自動關閉（貼心小體驗）
+window.onclick = function(event) {
+    if (event.target.classList.contains('custom-modal')) {
+        event.target.style.display = "none";
+    }
+};
+
     </script>
 </body>
 </html>
