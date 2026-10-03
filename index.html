@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Don't Think - Just Solve (v5572)</title>
+<title>Don't Think - Just Solve (v5573)</title>
 <style>
 :root {
 --bg-color: #0c0a0f;
@@ -766,7 +766,10 @@ button#btn-undo svg {
     <button id="ui-submit-match" class="btn-submit btn-disabled" disabled>SUBMIT</button>
 </div>
 <!-- Add this button next to your existing Submit button -->
-<button id="btn-undo" class="state-disabled" disabled onclick="handleUndoSolve()">
+<button id="btn-undo" 
+        disabled 
+        onclick="handleUndoSolve()"
+        style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; font-weight: 800; font-size: 12px; font-family: inherit; border-radius: 6px; border: none; outline: none; text-transform: uppercase; transition: all 0.2s ease; background-color: #1e2638; color: #4a5568; cursor: not-allowed; opacity: 0.6; box-shadow: none;">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 7v6h6"></path>
         <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
@@ -1914,7 +1917,7 @@ function hideRankEncyclopedia() {
             const topBarSpan = document.querySelector(".phone-container .top-bar span");
             if (topBarSpan) {
                 // 1. 先寫入乾淨的純文字
-                topBarSpan.textContent = "VER_5572";
+                topBarSpan.textContent = "VER_5573";
                 
                 // 2. ⚡【關鍵修正】：直接套用你原本大數字成功運行的那個 class 名稱！
                 // (註：如果你之前的 class 是叫 style-unreal-text，請把下面這行改成 "style-unreal-text")
@@ -2020,6 +2023,42 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+function updateUndoBtnState() {
+    const undoBtn = document.getElementById("btn-undo");
+    if (!undoBtn) return;
+
+    // Base Reset Styles applied directly to the element
+    undoBtn.style.display = "inline-flex";
+    undoBtn.style.alignItems = "center";
+    undoBtn.style.justifyContent = "center";
+    undoBtn.style.gap = "6px";
+    undoBtn.style.padding = "8px 14px";
+    undoBtn.style.fontWeight = "800";
+    undoBtn.style.fontSize = "12px";
+    undoBtn.style.borderRadius = "6px";
+    undoBtn.style.border = "none";
+    undoBtn.style.outline = "none";
+    undoBtn.style.textTransform = "uppercase";
+    undoBtn.style.transition = "all 0.2s ease";
+
+    if (typeof currentSolvePool !== "undefined" && currentSolvePool.length >= 1) {
+        // ACTIVE STATE: Bright Red Glow
+        undoBtn.disabled = false;
+        undoBtn.style.backgroundColor = "#ff3b30";
+        undoBtn.style.color = "#ffffff";
+        undoBtn.style.cursor = "pointer";
+        undoBtn.style.opacity = "1";
+        undoBtn.style.boxShadow = "0 0 12px rgba(255, 59, 48, 0.5)";
+    } else {
+        // DISABLED STATE: Dark theme matching your background
+        undoBtn.disabled = true;
+        undoBtn.style.backgroundColor = "#1e2638";
+        undoBtn.style.color = "#4a5568";
+        undoBtn.style.cursor = "not-allowed";
+        undoBtn.style.opacity = "0.6";
+        undoBtn.style.boxShadow = "none";
+    }
+}
     </script>
 </body>
 </html>
