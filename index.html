@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Don't Think - Just Solve (v5562)</title>
+<title>Don't Think - Just Solve (v5572)</title>
 <style>
 :root {
 --bg-color: #0c0a0f;
@@ -594,6 +594,97 @@ display: inline-block;
     padding: 6px 20px;
     border-radius: 4px;
     cursor: pointer;
+    .input-control-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #121622;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #1e2638;
+}
+
+.input-field {
+    width: 80px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #55607a;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+}
+
+.input-label {
+    font-size: 13px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.input-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* UNDO BUTTON STYLES (OVERRIDE) */
+button#btn-undo {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 8px 16px !important;
+    font-family: inherit !important;
+    font-weight: 800 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.5px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer !important;
+    text-transform: uppercase !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-sizing: border-box !important;
+}
+
+/* Disabled State: Dark tab blending into UI background */
+button#btn-undo.state-disabled,
+button#btn-undo:disabled {
+    background-color: #1e2538 !important;
+    color: #4a5568 !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+    box-shadow: none !important;
+}
+
+/* Active State: Vibrant neon red gradient */
+button#btn-undo.state-active {
+    background: linear-gradient(135deg, #ff453a, #ff3b30) !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.45) !important;
+}
+
+button#btn-undo.state-active:hover {
+    background: linear-gradient(135deg, #ff5d52, #ff453a) !important;
+    box-shadow: 0 0 16px rgba(255, 59, 48, 0.65) !important;
+    transform: translateY(-1px) !important;
+}
+
+button#btn-undo.state-active:active {
+    transform: scale(0.95) !important;
+}
+
+/* Icon rotation on hover */
+button#btn-undo.state-active:hover svg {
+    transform: rotate(-30deg);
+}
+
+button#btn-undo svg {
+    transition: transform 0.2s ease;
 }
 
 </style>
@@ -674,6 +765,14 @@ display: inline-block;
     <!-- 新增的提交按鈕 -->
     <button id="ui-submit-match" class="btn-submit btn-disabled" disabled>SUBMIT</button>
 </div>
+<!-- Add this button next to your existing Submit button -->
+<button id="btn-undo" class="state-disabled" disabled onclick="handleUndoSolve()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7v6h6"></path>
+        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+    </svg>
+    <span>UNDO</span>
+</button>
 
         <div class="live-timer-display" id="ui-live-timer-panel" onclick="triggerTimerInteraction()">TAP / SPACE TO INSPECT</div>
         <div class="fun-input-group" id="ui-fun-inputs">
@@ -1815,7 +1914,7 @@ function hideRankEncyclopedia() {
             const topBarSpan = document.querySelector(".phone-container .top-bar span");
             if (topBarSpan) {
                 // 1. 先寫入乾淨的純文字
-                topBarSpan.textContent = "VER_5562";
+                topBarSpan.textContent = "VER_5572";
                 
                 // 2. ⚡【關鍵修正】：直接套用你原本大數字成功運行的那個 class 名稱！
                 // (註：如果你之前的 class 是叫 style-unreal-text，請把下面這行改成 "style-unreal-text")
@@ -1853,7 +1952,74 @@ window.onclick = function(event) {
         event.target.style.display = "none";
     }
 };
+// Updates the Undo button state based on current solves in the pool
+// 1. Function to update the Undo button state (Active/Disabled)
+function updateUndoBtnState() {
+    const undoBtn = document.getElementById("btn-undo");
+    if (!undoBtn) return;
 
+    if (typeof currentSolvePool !== "undefined" && currentSolvePool.length >= 1) {
+        undoBtn.disabled = false;
+        undoBtn.className = "state-active";
+    } else {
+        undoBtn.disabled = true;
+        undoBtn.className = "state-disabled";
+    }
+}
+
+// 2. Function to handle clicking UNDO
+function handleUndoSolve() {
+    if (typeof currentSolvePool === "undefined" || currentSolvePool.length === 0) return;
+
+    // Remove the last solve from your existing pool
+    currentSolvePool.pop();
+
+    // Safely update the Ao5 slot UI elements
+    const slotsContainer = document.getElementById("ui-ao5-slots");
+    if (slotsContainer) {
+        const slots = slotsContainer.children;
+        for (let i = 0; i < slots.length; i++) {
+            if (i < currentSolvePool.length) {
+                let solve = currentSolvePool[i];
+                let timeVal = typeof solve === "object" ? solve.time : solve;
+                slots[i].innerText = typeof timeVal === "number" ? timeVal.toFixed(2) : timeVal;
+                slots[i].className = "ao5-slot slot-filled";
+            } else {
+                slots[i].innerText = "-";
+                slots[i].className = "ao5-slot";
+            }
+        }
+    }
+
+    // Refresh Undo button state
+    updateUndoBtnState();
+
+    // Generate a new scramble if the function exists
+    if (typeof generateAndDisplayScramble === "function") {
+        generateAndDisplayScramble();
+    }
+}
+
+// 3. Automatically listen for clicks on your existing Submit button 
+// to trigger updateUndoBtnState() without modifying your Submit function
+document.addEventListener("DOMContentLoaded", function () {
+    const submitBtn = document.getElementById("btn-submit");
+    if (submitBtn) {
+        submitBtn.addEventListener("click", function () {
+            // Small delay to allow your submit function to push the solve first
+            setTimeout(updateUndoBtnState, 50);
+        });
+    }
+
+    const inputField = document.getElementById("manual-input");
+    if (inputField) {
+        inputField.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                setTimeout(updateUndoBtnState, 50);
+            }
+        });
+    }
+});
     </script>
 </body>
 </html>
